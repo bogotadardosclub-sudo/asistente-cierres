@@ -1,930 +1,1268 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asistente de Cierres - Bogotá Dardos Club</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tailwind Configuration for Custom Theme Colors -->
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bgDark: '#05070A',
-            cardDark: '#141821',
-            borderDark: '#262D3D',
-            dartYellow: '#FDE047',
-            dartRed: '#EF4444',
-            dartGreen: '#10B981',
-            dartBlue: '#38BDF8',
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Asistente de Cierres · Bogotá Dardos Club</title>
   <style>
-    /* Custom scrollbar and high-visibility tweaks for 2.37m readability */
+    /* ==========================================
+       RESET & BASE STYLES (Zero Dependencies)
+       ========================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       background-color: #05070A;
       color: #F8FAFC;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.4;
       user-select: none;
       -webkit-user-select: none;
     }
-    .text-shadow-glow {
-      text-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+
+    /* SVG Explicit Sizing Safety */
+    svg {
+      display: inline-block;
+      vertical-align: middle;
+      max-width: 100%;
+      max-height: 100%;
+      flex-shrink: 0;
     }
-    .text-shadow-red {
-      text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+
+    /* ==========================================
+       HEADER BAR
+       ========================================== */
+    .app-header {
+      background-color: #0B0F17;
+      border-bottom: 1px solid #1E2532;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
-    /* Touch active state response */
-    .touch-active:active {
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .club-logo {
+      height: 46px;
+      width: auto;
+      object-fit: contain;
+      mix-blend-mode: lighten;
+      display: block;
+    }
+
+    .logo-fallback-svg {
+      width: 44px;
+      height: 44px;
+      display: none;
+    }
+
+    .app-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-action-yellow {
+      background: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
+      color: #0F172A;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(250, 204, 21, 0.25);
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+
+    .btn-action-yellow:active {
       transform: scale(0.96);
-      opacity: 0.9;
+    }
+
+    .btn-icon-circle {
+      background-color: #1E2532;
+      color: #94A3B8;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-icon-circle:hover, .btn-icon-circle:active {
+      background-color: #334155;
+      color: #FFFFFF;
+    }
+
+    /* ==========================================
+       MAIN CONTAINER & HERO SECTION
+       ========================================== */
+    .main-content {
+      flex: 1;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hero-card {
+      background-color: #11151E;
+      border: 1px solid #1E2532;
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .score-control-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+      margin: 4px 0;
+    }
+
+    .btn-step {
+      background-color: #1E2532;
+      border: 1px solid #334155;
+      color: #F8FAFC;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-step:active {
+      background-color: #334155;
+      transform: scale(0.94);
+    }
+
+    .score-display-clickable {
+      font-size: 4.5rem;
+      font-weight: 900;
+      line-height: 1;
+      color: #FFFFFF;
+      letter-spacing: -0.04em;
+      cursor: pointer;
+      padding: 0 12px;
+      border-radius: 12px;
+      transition: background-color 0.15s ease;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .score-display-clickable:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .tap-hint {
+      font-size: 0.75rem;
+      color: #64748B;
+      margin-bottom: 14px;
+    }
+
+    .target-pill {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #94A3B8;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .target-pill strong {
+      color: #FACC15;
+    }
+
+    /* Primary Sequence Box */
+    .route-box-primary {
+      background-color: #0B0F17;
+      border: 1.5px solid #2A3447;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 640px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+      min-height: 72px;
+    }
+
+    /* Strictly Color-Coded Darts */
+    .dart-code {
+      font-weight: 900;
+      font-size: 2.2rem;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .dart-t {
+      color: #EF4444; /* Triple = Bright Red */
+      text-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .dart-d {
+      color: #FACC15; /* Double = Gold Yellow */
+      text-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+    }
+
+    .dart-s {
+      color: #F8FAFC; /* Single = Pure White */
+    }
+
+    .arrow-sep {
+      color: #64748B;
+      font-size: 1.4rem;
+      font-weight: 400;
+    }
+
+    .bogey-message {
+      color: #94A3B8;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* ==========================================
+       CONTINGENCY MATRIX (5 MISSES GRID)
+       ========================================== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #FACC15;
+    }
+
+    .section-subtitle {
+      font-size: 0.75rem;
+      color: #64748B;
+    }
+
+    .contingency-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    .contingency-card {
+      background-color: #11151E;
+      border: 1px solid #1E2532;
+      border-radius: 12px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      min-height: 120px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      position: relative;
+      transition: border-color 0.15s ease;
+    }
+
+    .contingency-card:hover {
+      border-color: #334155;
+    }
+
+    .card-miss-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .card-rem-score {
+      font-size: 0.8rem;
+      color: #CBD5E1;
+      margin: 4px 0;
+    }
+
+    .card-rem-score strong {
+      color: #FFFFFF;
+      font-size: 0.95rem;
+    }
+
+    .card-route {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .card-route .dart-code {
+      font-size: 1.25rem;
+    }
+
+    .card-route .arrow-sep {
+      font-size: 0.9rem;
+    }
+
+    /* Badges for special states */
+    .badge-prep {
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid #0EA5E9;
+      color: #38BDF8;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-bust {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      color: #F87171;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .badge-finish {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22C55E;
+      color: #4ADE80;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Mobile Layout Adaptation for Grid (< 768px) */
+    @media (max-width: 767px) {
+      .contingency-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      /* Card 1 (Same Single Miss) spans full 2 columns on top */
+      .contingency-card:first-child {
+        grid-column: span 2;
+        background: linear-gradient(180deg, #161C28 0%, #11151E 100%);
+        border-color: #2A3447;
+      }
+
+      .contingency-card:first-child .card-route .dart-code {
+        font-size: 1.5rem;
+      }
+
+      .score-display-clickable {
+        font-size: 3.8rem;
+      }
+
+      .dart-code {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* ==========================================
+       MODALS (Keypad & Guide)
+       ========================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(3, 5, 8, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background-color: #11151E;
+      border: 1px solid #2A3447;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-close-modal:hover {
+      color: #FFFFFF;
+    }
+
+    /* Keypad Display Box */
+    .keypad-input-display {
+      background-color: #05070A;
+      border: 1.5px solid #334155;
+      border-radius: 12px;
+      padding: 12px 16px;
+      text-align: right;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #FACC15;
+      letter-spacing: 0.05em;
+      min-height: 60px;
+    }
+
+    /* Preset Chips */
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .chip-btn {
+      background-color: #1E2532;
+      border: 1px solid #334155;
+      color: #CBD5E1;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .chip-btn:active {
+      background-color: #FACC15;
+      color: #0F172A;
+    }
+
+    /* Keypad Grid */
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .key-btn {
+      background-color: #1E2532;
+      border: 1px solid #334155;
+      color: #FFFFFF;
+      font-size: 1.6rem;
+      font-weight: 800;
+      height: 56px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.12s ease, transform 0.08s ease;
+    }
+
+    .key-btn:active {
+      background-color: #334155;
+      transform: scale(0.95);
+    }
+
+    .key-btn-action {
+      background-color: #2A3447;
+      color: #94A3B8;
+      font-size: 1.1rem;
+    }
+
+    .key-btn-confirm {
+      grid-column: span 3;
+      background: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
+      color: #0F172A;
+      font-size: 1.1rem;
+      font-weight: 900;
+      height: 52px;
+      border: none;
+      margin-top: 4px;
+    }
+
+    /* Guide Modal Styling */
+    .guide-content {
+      font-size: 0.9rem;
+      color: #CBD5E1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .guide-item {
+      background-color: #05070A;
+      border: 1px solid #1E2532;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .guide-item h4 {
+      color: #FACC15;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .guide-item ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .guide-item li {
+      margin-bottom: 4px;
+      font-size: 0.8rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #475569;
+      margin-top: 10px;
     }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans antialiased bg-bgDark text-slate-100 overflow-x-hidden selection:bg-yellow-400 selection:text-black">
+<body>
 
-  <!-- ==================== HEADER BAR ==================== -->
-  <header class="w-full bg-cardDark/95 backdrop-blur-md border-b border-borderDark px-4 py-3 sticky top-0 z-30 shadow-md">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+  <!-- ==========================================
+       TOP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="brand-container">
+      <!-- 1. Real Logo Image with onError fallback -->
+      <img src="logo.png" 
+           alt="Bogotá Dardos Club" 
+           class="club-logo" 
+           onerror="this.style.display='none'; document.getElementById('logo-fallback-svg').style.display='inline-flex';">
       
-      <!-- Logo + Title Block -->
-      <div class="flex items-center gap-3">
-        
-        <!-- =========================================================================================
-             LOGOTIPO BOGOTÁ DARDOS CLUB (Vector SVG Integrado)
-             
-             NOTA PARA REEMPLAZAR CON TU IMAGEN DE DISPOSITIVO:
-             Si prefieres usar tu archivo de imagen local (ej. logo.png), reemplaza el bloque <svg>...</svg> por:
-             <img src="logo.png" alt="Bogotá Dardos Club" class="h-11 w-auto object-contain">
-             ========================================================================================= -->
-        <div class="relative flex-shrink-0 cursor-pointer" onclick="openInfoModal()" title="Ver información del club y leyenda">
-          <svg class="h-11 w-11 drop-shadow-md" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Left Red Flight -->
-            <path d="M40 40 L80 65 L65 110 L40 70 Z" fill="#E62E2D" stroke="#000" stroke-width="3"/>
-            <path d="M40 40 L65 70 L65 110 Z" fill="#C01F1E"/>
-            
-            <!-- Right Red Flight -->
-            <path d="M160 40 L120 65 L135 110 L160 70 Z" fill="#E62E2D" stroke="#000" stroke-width="3"/>
-            <path d="M160 40 L135 70 L135 110 Z" fill="#C01F1E"/>
-            
-            <!-- Center Yellow Flight -->
-            <path d="M100 25 L125 55 L100 95 L75 55 Z" fill="#FDE047" stroke="#000" stroke-width="3"/>
-            <path d="M100 25 L100 95 L75 55 Z" fill="#EAB308"/>
+      <!-- 2. Explicitly Sized Inline SVG Fallback -->
+      <svg id="logo-fallback-svg" class="logo-fallback-svg" width="44" height="44" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="#0F172A" stroke="#FACC15" stroke-width="4"/>
+        <polygon points="50,12 62,38 90,38 67,55 76,82 50,65 24,82 33,55 10,38 38,38" fill="#EF4444"/>
+        <circle cx="50" cy="50" r="16" fill="#FACC15"/>
+        <circle cx="50" cy="50" r="6" fill="#0F172A"/>
+      </svg>
 
-            <!-- Curved Yellow Banner -->
-            <path d="M 30 145 A 110 110 0 0 1 170 145 L 155 120 A 85 85 0 0 0 45 120 Z" fill="#FDE047" stroke="#000" stroke-width="3"/>
-            
-            <!-- Curved Text inside Banner -->
-            <path id="textArc" d="M 36 142 A 102 102 0 0 1 164 142" fill="none"/>
-            <text font-family="sans-serif" font-weight="900" font-size="16" fill="#000000" letter-spacing="1">
-              <textPath href="#textArc" startOffset="50%" text-anchor="middle">
-                BOGOTÁ DARDOS
-              </textPath>
-            </text>
+      <!-- App Title Only (no duplicated club text) -->
+      <h1 class="app-title">Asistente de Cierres</h1>
+    </div>
 
-            <!-- Bottom Ribbons & Tips -->
-            <path d="M30 145 L50 180 L40 145 Z" fill="#000"/>
-            <path d="M170 145 L150 180 L160 145 Z" fill="#000"/>
-            
-            <!-- Lower Small Darts -->
-            <path d="M80 155 L100 195 L90 155 Z" fill="#E62E2D"/>
-            <path d="M120 155 L100 195 L110 155 Z" fill="#E62E2D"/>
-            <path d="M96 155 L100 195 L104 155 Z" fill="#FDE047"/>
-          </svg>
-        </div>
+    <div class="header-actions">
+      <button class="btn-action-yellow" onclick="openKeypadModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Puntaje</span>
+      </button>
 
-        <!-- Application Title (Only App Name as requested) -->
-        <div>
-          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            Asistente de Cierres
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 hidden sm:inline-block">501 Pro</span>
-          </h1>
-        </div>
-      </div>
-
-      <!-- Header Quick Actions -->
-      <div class="flex items-center gap-2">
-        <!-- Keypad Modal Button -->
-        <button onclick="openKeypad()" class="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold px-3.5 py-2 rounded-xl transition shadow-lg shadow-yellow-400/10 touch-active text-sm sm:text-base">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-          </svg>
-          <span>Puntaje</span>
-        </button>
-
-        <!-- Info / Legend Button -->
-        <button onclick="openInfoModal()" class="p-2.5 rounded-xl bg-cardDark hover:bg-borderDark border border-borderDark text-slate-300 hover:text-white transition touch-active" title="Información y Leyenda">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </button>
-      </div>
-
+      <button class="btn-icon-circle" onclick="openGuideModal()" title="Guía de uso">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </button>
     </div>
   </header>
 
-  <!-- ==================== MAIN CONTENT AREA ==================== -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-4 sm:gap-6 justify-between">
-    
-    <!-- ================= HERO SECTION (TOP 40%) ================= -->
-    <section class="bg-cardDark border border-borderDark rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden flex flex-col justify-center items-center text-center">
-      <!-- Background subtle gradient glow -->
-      <div class="absolute -top-24 -left-24 w-60 h-60 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-60 h-60 bg-red-500/5 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- ==========================================
+       MAIN CONTENT
+       ========================================== -->
+  <main class="main-content">
 
-      <!-- Current Score Display with Quick Adjusters -->
-      <div class="w-full flex items-center justify-center gap-3 sm:gap-6 mb-2">
-        <!-- Decrement Button -->
-        <button onclick="adjustScore(-1)" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-borderDark/80 hover:bg-borderDark text-slate-300 hover:text-white font-black text-2xl flex items-center justify-center border border-borderDark transition touch-active" title="Restar 1 punto">
-          −
-        </button>
-
-        <!-- Score Box (Clickable to open keypad) -->
-        <div onclick="openKeypad()" class="cursor-pointer group flex flex-col items-center px-6 py-2 rounded-2xl hover:bg-borderDark/40 transition border border-transparent hover:border-yellow-400/30">
-          <span class="text-xs sm:text-sm font-bold tracking-widest text-slate-400 uppercase flex items-center gap-1.5">
-            CIERRE ACTUAL
-            <svg class="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-            </svg>
-          </span>
-          <div id="currentScoreDisplay" class="text-6xl sm:text-7xl md:text-8xl font-black tracking-tight text-white text-shadow-glow leading-none my-1">
-            92
-          </div>
-          <span class="text-[11px] text-slate-500 group-hover:text-yellow-400/80 transition">Toca para cambiar</span>
-        </div>
-
-        <!-- Increment Button -->
-        <button onclick="adjustScore(1)" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-borderDark/80 hover:bg-borderDark text-slate-300 hover:text-white font-black text-2xl flex items-center justify-center border border-borderDark transition touch-active" title="Sumar 1 punto">
-          +
-        </button>
+    <!-- HERO CARD: Score & Ideal Route -->
+    <section class="hero-card">
+      <div class="hero-label">
+        <span>Cierre Actual</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
       </div>
 
-      <!-- Dart 1 Target Highlight Line -->
-      <div id="dart1Banner" class="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 px-4 py-1.5 rounded-full my-2">
-        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Objetivo Inicial</span>
-        <span id="dart1TargetText" class="text-lg sm:text-xl font-black text-yellow-400">DARDO 1: T20</span>
+      <div class="score-control-group">
+        <button class="btn-step" onclick="adjustScore(-1)" aria-label="Restar 1">-</button>
+        <div id="score-display" class="score-display-clickable" onclick="openKeypadModal()" title="Toca para cambiar">92</div>
+        <button class="btn-step" onclick="adjustScore(1)" aria-label="Sumar 1">+</button>
       </div>
 
-      <!-- Main Checkout Route (Color Coded & Giant) -->
-      <div class="mt-2 w-full max-w-3xl">
-        <div id="mainRouteContainer" class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 py-2 px-4 rounded-2xl bg-bgDark/60 border border-borderDark/60 min-h-[70px]">
-          <!-- Rendered dynamically -->
-        </div>
+      <div class="tap-hint">Toca el número para escribir puntaje</div>
+
+      <div id="target-pill" class="target-pill">
+        OBJETIVO INICIAL · DARDO 1: <strong id="dart1-target-text">T20</strong>
       </div>
 
+      <!-- Main Route Box -->
+      <div id="primary-route-box" class="route-box-primary">
+        <!-- Rendered by JS -->
+      </div>
     </section>
 
-    <!-- ================= CONTINGENCY GRID (BOTTOM 60%) ================= -->
-    <section class="flex-1 flex flex-col justify-center">
-      
-      <!-- Section Header -->
-      <div class="flex items-center justify-between mb-3 px-1">
-        <h2 class="text-xs sm:text-sm font-extrabold tracking-wider text-slate-400 uppercase flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-          Reacción ante Fallo en Dardo 1 (5 Probabilidades)
-        </h2>
-        <span class="text-xs text-slate-500 hidden sm:inline">Calculado según diana estándar</span>
+    <!-- CONTINGENCY MATRIX SECTION -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Reacción ante fallo en Dardo 1 (5 Probabilidades)</h2>
+        <span class="section-subtitle">Calculado según diana estándar</span>
       </div>
 
-      <!-- 5 Cards Container -->
-      <!-- On Desktop/Tablet (>=768px): 5 equal columns side-by-side -->
-      <!-- On Mobile (<768px): Stacked or 2x2 grid for maximum readability without clipping -->
-      <div id="missCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-        <!-- Rendered dynamically via JavaScript -->
+      <div id="contingency-grid" class="contingency-grid">
+        <!-- 5 Cards populated dynamically by JS -->
       </div>
-
     </section>
 
   </main>
 
-  <!-- ==================== KEYPAD MODAL ==================== -->
-  <div id="keypadModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-cardDark border border-borderDark rounded-3xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[95vh]">
-      
-      <!-- Modal Header -->
-      <div class="p-4 border-b border-borderDark flex items-center justify-between bg-bgDark/40">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-          </svg>
-          Ingresar Puntaje
-        </h3>
-        <button onclick="closeKeypad()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+  <!-- FOOTER NOTE -->
+  <div class="footer-note">
+    Bogotá Dardos Club · Calibrado para iniciación (Prioridad D16 & D20)
+  </div>
+
+  <!-- ==========================================
+       MODAL 1: KEYPAD
+       ========================================== -->
+  <div id="keypad-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Ingresar Puntaje</h3>
+        <button class="btn-close-modal" onclick="closeKeypadModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
 
-      <div class="p-4 flex flex-col gap-4 overflow-y-auto">
-        
-        <!-- Keypad Output Display -->
-        <div class="bg-bgDark border border-borderDark rounded-2xl p-3 flex items-center justify-between">
-          <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Nuevo Cierre:</span>
-          <span id="keypadBuffer" class="text-4xl font-black text-yellow-400 tracking-wider">92</span>
-        </div>
+      <div id="keypad-buffer" class="keypad-input-display">92</div>
 
-        <!-- Quick Access Preset Chips -->
-        <div>
-          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Cierres Frecuentes / Prueba:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <button onclick="setKeypadScore(170)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">170</button>
-            <button onclick="setKeypadScore(128)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">128</button>
-            <button onclick="setKeypadScore(121)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">121</button>
-            <button onclick="setKeypadScore(92)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">92</button>
-            <button onclick="setKeypadScore(82)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">82</button>
-            <button onclick="setKeypadScore(65)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">65</button>
-            <button onclick="setKeypadScore(48)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">48</button>
-            <button onclick="setKeypadScore(32)" class="px-2.5 py-1 bg-borderDark hover:bg-yellow-400 hover:text-black text-xs font-bold rounded-lg transition">32</button>
-          </div>
-        </div>
+      <!-- Presets -->
+      <div class="preset-chips">
+        <button class="chip-btn" onclick="setPresetScore(170)">170</button>
+        <button class="chip-btn" onclick="setPresetScore(128)">128</button>
+        <button class="chip-btn" onclick="setPresetScore(121)">121</button>
+        <button class="chip-btn" onclick="setPresetScore(92)">92</button>
+        <button class="chip-btn" onclick="setPresetScore(82)">82</button>
+        <button class="chip-btn" onclick="setPresetScore(65)">65</button>
+        <button class="chip-btn" onclick="setPresetScore(48)">48</button>
+        <button class="chip-btn" onclick="setPresetScore(32)">32</button>
+      </div>
 
-        <!-- Keypad Grid (0-9, Borrar, Limpiar) -->
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="pressKey('1')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">1</button>
-          <button onclick="pressKey('2')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">2</button>
-          <button onclick="pressKey('3')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">3</button>
-          
-          <button onclick="pressKey('4')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">4</button>
-          <button onclick="pressKey('5')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">5</button>
-          <button onclick="pressKey('6')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">6</button>
-          
-          <button onclick="pressKey('7')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">7</button>
-          <button onclick="pressKey('8')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">8</button>
-          <button onclick="pressKey('9')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">9</button>
-          
-          <button onclick="clearKeypad()" class="py-3.5 rounded-xl bg-red-950/40 border border-red-800/40 text-red-400 hover:bg-red-900/40 text-sm font-bold touch-active">C</button>
-          <button onclick="pressKey('0')" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-2xl font-extrabold text-white touch-active">0</button>
-          <button onclick="backspaceKeypad()" class="py-3.5 rounded-xl bg-borderDark/60 hover:bg-borderDark text-slate-300 text-lg font-bold flex items-center justify-center touch-active">⌫</button>
-        </div>
+      <!-- Keypad Grid -->
+      <div class="keypad-grid">
+        <button class="key-btn" onclick="pressKey('1')">1</button>
+        <button class="key-btn" onclick="pressKey('2')">2</button>
+        <button class="key-btn" onclick="pressKey('3')">3</button>
 
-        <!-- Apply Button -->
-        <button onclick="applyKeypadScore()" class="w-full py-4 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-black text-lg font-black tracking-wide shadow-lg shadow-yellow-400/20 transition touch-active mt-1">
-          CONFIRMAR NÚMERO
+        <button class="key-btn" onclick="pressKey('4')">4</button>
+        <button class="key-btn" onclick="pressKey('5')">5</button>
+        <button class="key-btn" onclick="pressKey('6')">6</button>
+
+        <button class="key-btn" onclick="pressKey('7')">7</button>
+        <button class="key-btn" onclick="pressKey('8')">8</button>
+        <button class="key-btn" onclick="pressKey('9')">9</button>
+
+        <button class="key-btn key-btn-action" onclick="pressKey('C')">C</button>
+        <button class="key-btn" onclick="pressKey('0')">0</button>
+        <button class="key-btn key-btn-action" onclick="pressKey('DEL')">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+            <line x1="18" y1="9" x2="12" y2="15"></line>
+            <line x1="12" y1="9" x2="18" y2="15"></line>
+          </svg>
         </button>
 
+        <button class="key-btn key-btn-confirm" onclick="confirmKeypadScore()">CONFIRMAR NÚMERO</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== INFO & LEGEND MODAL ==================== -->
-  <div id="infoModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-cardDark border border-borderDark rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-      
-      <div class="p-4 border-b border-borderDark flex items-center justify-between bg-bgDark/40">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-          <h3 class="text-lg font-bold text-white">Bogotá Dardos Club - Guía</h3>
-        </div>
-        <button onclick="closeInfoModal()" class="text-slate-400 hover:text-white p-1">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+  <!-- ==========================================
+       MODAL 2: GUIDE & PHILOSOPHY
+       ========================================== -->
+  <div id="guide-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Bogotá Dardos Club · Guía</h3>
+        <button class="btn-close-modal" onclick="closeGuideModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
 
-      <div class="p-5 overflow-y-auto flex flex-col gap-4 text-sm text-slate-300">
-        
-        <div>
-          <h4 class="font-bold text-white mb-2 text-base">Código de Colores de Lanzamiento</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <div class="p-2.5 rounded-xl bg-bgDark border border-borderDark flex items-center gap-2">
-              <span class="w-4 h-4 rounded-full bg-red-500 flex-shrink-0"></span>
-              <div>
-                <span class="font-bold text-red-500 block">Rojo</span>
-                <span class="text-xs text-slate-400">Triples (T)</span>
-              </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-bgDark border border-borderDark flex items-center gap-2">
-              <span class="w-4 h-4 rounded-full bg-yellow-400 flex-shrink-0"></span>
-              <div>
-                <span class="font-bold text-yellow-400 block">Amarillo</span>
-                <span class="text-xs text-slate-400">Dobles (D)</span>
-              </div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-bgDark border border-borderDark flex items-center gap-2">
-              <span class="w-4 h-4 rounded-full bg-slate-100 flex-shrink-0"></span>
-              <div>
-                <span class="font-bold text-white block">Blanco</span>
-                <span class="text-xs text-slate-400">Sencillos (S)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-bgDark/60 p-3.5 rounded-2xl border border-borderDark">
-          <h4 class="font-bold text-white mb-1">Filosofía para Principiantes</h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Las rutas están calibradas para evitar el Bull central en cierres medios y priorizar las dobles más amplias y seguras: <strong class="text-yellow-400">D16</strong> y <strong class="text-yellow-400">D20</strong>. Si se falla en D16, queda D8 (16 pts); si se falla en D20, queda D10 (20 pts).
-          </p>
-        </div>
-
-        <div>
-          <h4 class="font-bold text-white mb-2">Teclado Físico (Accesos directos)</h4>
-          <ul class="list-disc list-inside text-xs space-y-1 text-slate-400">
-            <li>Escribe cualquier número <strong class="text-white">0-9</strong> en el teclado para cambiar el cierre.</li>
-            <li>Presiona <strong class="text-white">Enter</strong> para confirmar.</li>
-            <li>Presiona <strong class="text-white">Escape</strong> para cerrar menús.</li>
+      <div class="guide-content">
+        <div class="guide-item">
+          <h4>Código de Colores de Lanzamiento</h4>
+          <ul>
+            <li><strong style="color:#EF4444;">Rojo:</strong> Triples (T)</li>
+            <li><strong style="color:#FACC15;">Amarillo:</strong> Dobles (D)</li>
+            <li><strong style="color:#F8FAFC;">Blanco:</strong> Sencillos (S)</li>
           </ul>
         </div>
 
-        <button onclick="closeInfoModal()" class="w-full py-3 rounded-xl bg-borderDark hover:bg-slate-700 text-white font-bold transition">
-          Entendido
-        </button>
+        <div class="guide-item">
+          <h4>Filosofía para Principiantes</h4>
+          <p>Las rutas están calibradas para evitar el Bull central en cierres medios y priorizar las dobles más amplias y seguras: <strong>D16 y D20</strong>. Si se falla en D16, queda D8 (16 pts); si se falla en D20, queda D10 (20 pts).</p>
+        </div>
 
+        <div class="guide-item">
+          <h4>Teclado Físico (Accesos directos)</h4>
+          <ul>
+            <li>Escribe cualquier número 0-9 en el teclado para cambiar el cierre.</li>
+            <li>Presiona <strong>Enter</strong> para confirmar.</li>
+            <li>Presiona <strong>Escape</strong> para cerrar menús.</li>
+          </ul>
+        </div>
       </div>
+
+      <button class="key-btn key-btn-confirm" onclick="closeGuideModal()">Entendido</button>
     </div>
   </div>
 
-
-  <!-- ==================== JAVASCRIPT LOGIC ENGINE ==================== -->
+  <!-- ==========================================
+       CHECKOUT ENGINE & APPLICATION JS logic
+       ========================================== -->
   <script>
-    /* Official Clockwise Dartboard Sequence */
+    // State Variables
+    let currentScore = 92;
+    let keypadBuffer = "92";
+
+    // Standard Dartboard Ring Order (Clockwise)
     const DARTBOARD_RING = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
-    /* Helper: Get adjacent ring numbers for a given number (1-20) */
-    function getAdjacentNumbers(num) {
-      const idx = DARTBOARD_RING.indexOf(num);
-      if (idx === -1) return { left: 1, right: 1 };
-      const left = DARTBOARD_RING[(idx - 1 + 20) % 20];
-      const right = DARTBOARD_RING[(idx + 1) % 20];
-      return { left, right };
-    }
+    // Bogeys: 3-dart impossible checkouts under 170
+    const BOGEY_SCORES = new Set([169, 168, 166, 165, 163, 162, 159]);
 
-    /* Master State */
-    let currentScore = 92;
-    let keypadBufferString = "92";
+    // Preferred Double Priorities (Beginner Friendly)
+    const PREFERRED_DOUBLES = [16, 20, 12, 18, 14, 8, 10, 4, 2, 5, 6, 7, 9, 11, 13, 15, 17, 19, 1, 25];
 
-    /* Initialize Application on Page Load */
-    window.addEventListener('load', () => {
+    /* ==========================================
+       INIT & EVENT LISTENERS
+       ========================================== */
+    window.addEventListener('DOMContentLoaded', () => {
       renderApp();
-      setupPhysicalKeyboard();
+
+      // Keyboard listeners for fast desktop scoring
+      window.addEventListener('keydown', (e) => {
+        const keypadModal = document.getElementById('keypad-modal');
+        const isModalOpen = keypadModal.classList.contains('active');
+
+        if (e.key >= '0' && e.key <= '9') {
+          if (!isModalOpen) openKeypadModal();
+          pressKey(e.key);
+        } else if (e.key === 'Backspace') {
+          if (isModalOpen) pressKey('DEL');
+        } else if (e.key === 'Enter') {
+          if (isModalOpen) confirmKeypadScore();
+        } else if (e.key === 'Escape') {
+          closeKeypadModal();
+          closeGuideModal();
+        }
+      });
     });
 
-    /* Adjust score by offset (+1 or -1) */
-    function adjustScore(offset) {
-      let next = currentScore + offset;
+    /* ==========================================
+       SCORE CONTROL & MODALS
+       ========================================== */
+    function adjustScore(delta) {
+      let next = currentScore + delta;
       if (next < 2) next = 2;
       if (next > 170) next = 170;
       currentScore = next;
-      keypadBufferString = currentScore.toString();
+      keypadBuffer = currentScore.toString();
       renderApp();
     }
 
-    /* Primary Render Engine */
-    function renderApp() {
-      // Update Hero Score Display
-      document.getElementById('currentScoreDisplay').innerText = currentScore;
-      document.getElementById('keypadBuffer').innerText = keypadBufferString || "0";
+    function openKeypadModal() {
+      keypadBuffer = currentScore.toString();
+      updateKeypadBufferDisplay();
+      document.getElementById('keypad-modal').classList.add('active');
+    }
 
-      // Calculate 3-Dart Checkout Solution
-      const solution = solveCheckout(currentScore);
+    function closeKeypadModal() {
+      document.getElementById('keypad-modal').classList.remove('active');
+    }
 
-      // Render Main Route Container
-      const mainContainer = document.getElementById('mainRouteContainer');
-      const dart1Banner = document.getElementById('dart1TargetText');
-      mainContainer.innerHTML = '';
+    function openGuideModal() {
+      document.getElementById('guide-modal').classList.add('active');
+    }
 
-      if (solution.status === 'NO_CHECKOUT') {
-        dart1Banner.innerText = 'DARDO 1: PREPARACIÓN';
-        mainContainer.innerHTML = `
-          <div class="text-red-400 font-extrabold text-lg sm:text-xl">
-            SIN CIERRE EN 3 DARDOS (Puntaje > 170 o Bogey)
-          </div>
-          <div class="w-full text-xs text-slate-400 mt-1">
-            Lanza a T20 para reducir puntaje y buscar D16 / D20 en el siguiente turno.
-          </div>
-        `;
-        renderMissCards(null);
-        return;
-      }
+    function closeGuideModal() {
+      document.getElementById('guide-modal').classList.remove('active');
+    }
 
-      // Display Target for Dart 1
-      const dart1 = solution.route[0];
-      dart1Banner.innerText = `DARDO 1: ${dart1.name}`;
-
-      // Build Route HTML with Strict Color Coding
-      solution.route.forEach((step, index) => {
-        if (index > 0) {
-          const arrow = document.createElement('span');
-          arrow.className = 'text-slate-500 font-bold text-xl sm:text-2xl mx-1';
-          arrow.innerHTML = '→';
-          mainContainer.appendChild(arrow);
+    function pressKey(key) {
+      if (key === 'C') {
+        keypadBuffer = "";
+      } else if (key === 'DEL') {
+        keypadBuffer = keypadBuffer.slice(0, -1);
+      } else {
+        if (keypadBuffer.length < 3) {
+          if (keypadBuffer === "0") keypadBuffer = key;
+          else keypadBuffer += key;
         }
-
-        const stepBadge = document.createElement('span');
-        let colorClass = 'text-white';
-        if (step.type === 'T') colorClass = 'text-dartRed font-black text-2xl sm:text-4xl text-shadow-red';
-        else if (step.type === 'D') colorClass = 'text-dartYellow font-black text-2xl sm:text-4xl text-shadow-glow';
-        else colorClass = 'text-slate-100 font-extrabold text-2xl sm:text-4xl';
-
-        stepBadge.className = `${colorClass} tracking-tight`;
-        stepBadge.innerText = step.name;
-        mainContainer.appendChild(stepBadge);
-      });
-
-      // Render 5 Contingency Miss Cards for Dart 1
-      renderMissCards(dart1);
+      }
+      updateKeypadBufferDisplay();
     }
 
-    /* 
-     * Solve 3-Dart Checkout (Beginner-Calibrated)
-     */
-    function solveCheckout(score) {
-      if (score < 2 || score > 170) return { status: 'NO_CHECKOUT' };
-
-      // Check explicit 3-dart beginner table first
-      const explicit3Dart = GET_BEGINNER_3DART_TABLE(score);
-      if (explicit3Dart) {
-        return { status: 'OK', route: explicit3Dart };
-      }
-
-      // Check 2-dart or 1-dart direct finishes
-      const direct2Dart = solve2DartCheckout(score);
-      if (direct2Dart) {
-        return { status: 'OK', route: direct2Dart };
-      }
-
-      return { status: 'NO_CHECKOUT' };
+    function setPresetScore(val) {
+      keypadBuffer = val.toString();
+      updateKeypadBufferDisplay();
+      confirmKeypadScore();
     }
 
-    /*
-     * Beginner Calibrated Table for Scores 61-170
-     */
-    function GET_BEGINNER_3DART_TABLE(score) {
-      // Helper creators
-      const T = (val) => ({ name: `T${val}`, val: val * 3, type: 'T', num: val });
-      const D = (val) => ({ name: val === 25 ? 'DB' : `D${val}`, val: val === 25 ? 50 : val * 2, type: 'D', num: val });
-      const S = (val) => ({ name: val === 25 ? '25' : `S${val}`, val: val, type: 'S', num: val });
+    function updateKeypadBufferDisplay() {
+      document.getElementById('keypad-buffer').innerText = keypadBuffer || "0";
+    }
 
-      // Special 61-100 Beginner Table
-      const routes61_100 = {
-        61: [T(15), D(8)],
-        62: [T(10), D(16)],
-        63: [T(13), D(12)],
-        64: [T(16), D(8)],
-        65: [T(11), D(16)],
-        66: [T(10), D(18)],
-        67: [T(17), D(8)],
-        68: [T(20), D(4)],
-        69: [T(15), D(12)],
-        70: [T(10), D(20)],
-        71: [T(13), D(16)],
-        72: [T(16), D(12)],
-        73: [T(19), D(8)],
-        74: [T(14), D(16)],
-        75: [T(17), D(12)],
-        76: [T(20), D(8)],
-        77: [T(19), D(10)],
-        78: [T(18), D(12)],
-        79: [T(13), D(20)],
-        80: [T(20), D(10)],
-        81: [T(19), D(12)],
-        82: [T(14), D(20)],
-        83: [T(17), D(16)],
-        84: [T(20), D(12)],
-        85: [T(15), D(20)],
-        86: [T(18), D(16)],
-        87: [T(17), D(18)],
-        88: [T(16), D(20)],
-        89: [T(19), D(16)],
-        90: [T(18), D(18)],
-        91: [T(17), D(20)],
-        92: [T(20), D(16)],
-        93: [T(19), D(18)],
-        94: [T(18), D(20)],
-        95: [T(19), D(19)],
-        96: [T(20), D(18)],
-        97: [T(19), D(20)],
-        98: [T(20), D(19)],
-        99: [T(19), S(10), D(16)],
-        100: [T(20), D(20)],
-      };
+    function confirmKeypadScore() {
+      let parsed = parseInt(keypadBuffer, 10);
+      if (isNaN(parsed) || parsed < 2) parsed = 2;
+      if (parsed > 170) parsed = 170;
+      currentScore = parsed;
+      closeKeypadModal();
+      renderApp();
+    }
 
-      if (routes61_100[score]) return routes61_100[score];
+    /* ==========================================
+       501 BEGINNER CHECKOUT ENGINE
+       ========================================== */
+    
+    // Check if dart string is Double, Triple, Single
+    function parseDart(dartStr) {
+      if (dartStr === 'DB') return { type: 'DB', value: 50, num: 25 };
+      if (dartStr === '25' || dartStr === 'S25') return { type: 'S', value: 25, num: 25 };
+      if (dartStr.startsWith('T')) return { type: 'T', value: parseInt(dartStr.slice(1))*3, num: parseInt(dartStr.slice(1)) };
+      if (dartStr.startsWith('D')) return { type: 'D', value: parseInt(dartStr.slice(1))*2, num: parseInt(dartStr.slice(1)) };
+      if (dartStr.startsWith('S')) return { type: 'S', value: parseInt(dartStr.slice(1)), num: parseInt(dartStr.slice(1)) };
+      return { type: 'S', value: 0, num: 0 };
+    }
 
-      // Explicit 101-170 routes
-      const routes101_170 = {
-        101: [T(17), S(18), D(16)],
-        102: [T(20), S(10), D(16)],
-        103: [T(19), S(10), D(18)],
-        104: [T(18), S(18), D(16)],
-        105: [T(19), S(16), D(16)],
-        106: [T(20), S(10), D(18)],
-        107: [T(19), S(10), D(20)],
-        108: [T(20), S(16), D(16)],
-        109: [T(20), S(9), D(20)],
-        110: [T(20), S(10), D(20)],
-        111: [T(20), S(19), D(16)],
-        112: [T(20), S(12), D(20)],
-        113: [T(19), S(16), D(20)],
-        114: [T(20), S(14), D(20)],
-        115: [T(20), S(15), D(20)],
-        116: [T(20), S(16), D(20)],
-        117: [T(20), S(17), D(20)],
-        118: [T(20), S(18), D(20)],
-        119: [T(19), S(12), D(20)],
-        120: [T(20), S(20), D(20)],
-        // 121-130: Avoid central Bull for beginners where possible
-        121: [T(17), T(18), D(8)],
-        122: [T(18), T(20), D(4)],
-        123: [T(19), T(16), D(9)],
-        124: [T(20), T(16), D(8)],
-        125: [T(18), T(13), D(16)],
-        126: [T(19), T(19), D(6)],
-        127: [T(20), T(17), D(8)],
-        128: [T(18), T(14), D(16)],
-        129: [T(19), T(16), D(12)],
-        130: [T(20), T(20), D(5)],
-        131: [T(20), T(13), D(16)],
-        132: [T(20), T(16), D(12)],
-        133: [T(20), T(19), D(8)],
-        134: [T(20), T(14), D(16)],
-        135: [T(20), T(17), D(12)],
-        136: [T(20), T(20), D(8)],
-        137: [T(19), T(16), D(16)],
-        138: [T(20), T(18), D(12)],
-        139: [T(20), T(13), D(20)],
-        140: [T(20), T(20), D(10)],
-        141: [T(20), T(15), D(18)],
-        142: [T(20), T(14), D(20)],
-        143: [T(20), T(17), D(16)],
-        144: [T(20), T(20), D(12)],
-        145: [T(20), T(15), D(20)],
-        146: [T(20), T(18), D(16)],
-        147: [T(20), T(17), D(18)],
-        148: [T(20), T(16), D(20)],
-        149: [T(20), T(19), D(16)],
-        150: [T(20), T(18), D(18)],
-        151: [T(20), T(17), D(20)],
-        152: [T(20), T(20), D(16)],
-        153: [T(20), T(19), D(18)],
-        154: [T(20), T(18), D(20)],
-        155: [T(20), T(19), D(19)],
-        156: [T(20), T(20), D(18)],
-        157: [T(20), T(19), D(20)],
-        158: [T(20), T(20), D(19)],
-        160: [T(20), T(20), D(20)],
-        161: [T(20), T(17), D(25)],
-        164: [T(20), T(19), D(25)],
-        167: [T(20), T(19), D(25)],
-        170: [T(20), T(20), D(25)]
-      };
+    // Helper: format dart HTML with strict colors
+    function formatDartHTML(dartStr) {
+      if (!dartStr) return '';
+      if (dartStr.startsWith('T')) {
+        return `<span class="dart-code dart-t">${dartStr}</span>`;
+      }
+      if (dartStr.startsWith('D') || dartStr === 'DB') {
+        return `<span class="dart-code dart-d">${dartStr}</span>`;
+      }
+      return `<span class="dart-code dart-s">${dartStr}</span>`;
+    }
 
-      if (routes101_170[score]) return routes101_170[score];
+    // Find 1-dart checkout
+    function get1DartCheckout(score) {
+      if (score === 50) return ['DB'];
+      if (score <= 40 && score % 2 === 0) return [`D${score / 2}`];
       return null;
     }
 
-    /*
-     * Dynamically Solves 2-Dart Checkout for remaining <= 110
-     */
-    function solve2DartCheckout(score) {
-      if (score < 2) return null;
+    // Find 2-dart checkout
+    function get2DartCheckout(score) {
+      if (score < 2 || score > 110) return null;
+      let direct1 = get1DartCheckout(score);
+      if (direct1) return direct1;
 
-      const T = (val) => ({ name: `T${val}`, val: val * 3, type: 'T', num: val });
-      const D = (val) => ({ name: val === 25 ? 'DB' : `D${val}`, val: val === 25 ? 50 : val * 2, type: 'D', num: val });
-      const S = (val) => ({ name: val === 25 ? '25' : `S${val}`, val: val, type: 'S', num: val });
+      // Try preferred double finishes
+      for (let d of PREFERRED_DOUBLES) {
+        let dVal = (d === 25) ? 50 : d * 2;
+        let dLabel = (d === 25) ? 'DB' : `D${d}`;
+        let rem = score - dVal;
+        if (rem <= 0) continue;
 
-      // Direct 1-dart double (even <= 40 or 50)
-      if (score <= 40 && score % 2 === 0) {
-        return [D(score / 2)];
-      }
-      if (score === 50) return [D(25)];
-
-      // 2-Dart Bogeys
-      const bogeys2Dart = [99, 102, 103, 105, 106, 108, 109];
-      if (bogeys2Dart.includes(score) || score > 110) return null;
-
-      // Check 41-60 (Single + Double)
-      if (score >= 41 && score <= 60) {
-        // Prefer D16 or D20
-        let rem16 = score - 32;
-        if (rem16 >= 1 && rem16 <= 20) return [S(rem16), D(16)];
-
-        let rem20 = score - 40;
-        if (rem20 >= 1 && rem20 <= 20) return [S(rem20), D(20)];
-
-        // Fallback to preferred double
-        for (let d of [12, 8, 10, 18, 14, 5, 4, 2, 1]) {
-          let rem = score - d * 2;
-          if (rem >= 1 && rem <= 20) return [S(rem), D(d)];
+        // rem can be achieved by single or triple
+        if (rem <= 20) {
+          return [`S${rem}`, dLabel];
+        } else if (rem === 25) {
+          return [`25`, dLabel];
+        } else if (rem <= 60 && rem % 3 === 0) {
+          return [`T${rem / 3}`, dLabel];
         }
       }
 
-      // Check 2-dart checkout table 61-110
-      const beginner2Dart = GET_BEGINNER_3DART_TABLE(score);
-      if (beginner2Dart && beginner2Dart.length === 2) {
-        return beginner2Dart;
+      // Fallback 2-dart search
+      for (let s = 20; s >= 1; s--) {
+        for (let mult of [3, 1]) {
+          let dart1Val = s * mult;
+          let dart1Label = mult === 3 ? `T${s}` : `S${s}`;
+          let rem = score - dart1Val;
+          if (rem > 0 && rem <= 40 && rem % 2 === 0) {
+            return [dart1Label, `D${rem / 2}`];
+          } else if (rem === 50) {
+            return [dart1Label, `DB`];
+          }
+        }
+      }
+      return null;
+    }
+
+    // Main 3-Dart Beginner Solver
+    function get3DartCheckout(score) {
+      if (score < 2 || score > 170 || BOGEY_SCORES.has(score)) return null;
+
+      // 1 Dart check
+      let d1 = get1DartCheckout(score);
+      if (d1) return d1;
+
+      // 2 Dart check
+      let d2 = get2DartCheckout(score);
+      if (d2) return d2;
+
+      // Range 41 - 60 (BEGINNER MANDATE: NO TRIPLES WITH 3 DARTS)
+      if (score >= 41 && score <= 60) {
+        // Find Single + D16 or Single + D20
+        // Target D16 (32) first
+        if (score - 32 >= 1 && score - 32 <= 20) {
+          return [`S${score - 32}`, `D16`];
+        }
+        // Target D20 (40) next
+        if (score - 40 >= 1 && score - 40 <= 20) {
+          return [`S${score - 40}`, `D20`];
+        }
+        // Fallback to D12 (24) or D18 (36)
+        if (score - 24 >= 1 && score - 24 <= 20) return [`S${score - 24}`, `D12`];
+        if (score - 36 >= 1 && score - 36 <= 20) return [`S${score - 36}`, `D18`];
       }
 
-      // Check High 2-Dart Checkouts with Bull: 101, 104, 107, 110
-      if (score === 101) return [T(17), D(25)];
-      if (score === 104) return [T(18), D(25)];
-      if (score === 107) return [T(19), D(25)];
-      if (score === 110) return [T(20), D(25)];
+      // Range 61 - 100: Prioritize T + D16 / D20 with safety net
+      if (score >= 61 && score <= 100) {
+        // Special beginner presets for 61-100
+        const PRESETS_61_100 = {
+          92: ['T20', 'D16'],
+          96: ['T20', 'D18'],
+          90: ['T20', 'D15'],
+          82: ['T14', 'D20'],
+          70: ['T10', 'D20'],
+          68: ['T12', 'D16'],
+          65: ['25', 'D20'],
+          61: ['T15', 'D8']
+        };
+        if (PRESETS_61_100[score]) return PRESETS_61_100[score];
 
-      // Odd scores <= 39 (Single + Double)
-      if (score < 40 && score % 2 !== 0) {
-        // Preferred doubles list: 16, 8, 4, 20, 10, 5, 2, 1
-        const prefDoubles = [16, 8, 4, 20, 10, 5, 2, 1];
-        for (let d of prefDoubles) {
-          let reqSingle = score - (d * 2);
-          if (reqSingle >= 1 && reqSingle <= 20) {
-            return [S(reqSingle), D(d)];
+        // Search T + Double finish
+        for (let t = 20; t >= 10; t--) {
+          let rem = score - (t * 3);
+          if (rem > 0 && rem <= 40 && rem % 2 === 0) {
+            return [`T${t}`, `D${rem / 2}`];
           }
         }
       }
 
+      // High scores 101 - 170
+      // Try T20 first, then T19, T18, T17...
+      for (let t of [20, 19, 18, 17, 16, 15]) {
+        let rem = score - (t * 3);
+        if (rem >= 2) {
+          let sub = get2DartCheckout(rem);
+          if (sub) {
+            return [`T${t}`, ...sub];
+          }
+        }
+      }
+
+      // Exhaustive fallback 3-dart search
+      for (let t = 20; t >= 1; t--) {
+        let rem = score - (t * 3);
+        if (rem >= 2) {
+          let sub = get2DartCheckout(rem);
+          if (sub) return [`T${t}`, ...sub];
+        }
+      }
+
       return null;
     }
 
-    /*
-     * 2-Dart Setup Algorithm (Tiro de Preparación)
-     * Used when remaining score cannot be checked out in 2 darts.
-     * Searches best throw to leave 32 (D16) or 40 (D20).
-     */
-    function calculate2DartSetup(remainingScore) {
-      const T = (val) => ({ name: `T${val}`, val: val * 3, type: 'T', num: val });
-      const S = (val) => ({ name: val === 25 ? '25' : `S${val}`, val: val, type: 'S', num: val });
+    /* ==========================================
+       CONTINGENCY MATRIX CALCULATOR
+       ========================================== */
+    function getAdjacentNumbers(num) {
+      let idx = DARTBOARD_RING.indexOf(num);
+      if (idx === -1) return { left: 1, right: 1 };
+      let left = DARTBOARD_RING[(idx - 1 + 20) % 20];
+      let right = DARTBOARD_RING[(idx + 1) % 20];
+      return { left, right };
+    }
 
-      if (remainingScore <= 1) return [S(0), S(0)];
+    function generateContingencies(score, d1Label) {
+      if (!d1Label) return [];
+      let parsed = parseDart(d1Label);
+      let num = parsed.num;
+      let adj = getAdjacentNumbers(num);
 
-      // Aim targets to leave
-      const idealTargets = [32, 40, 36, 24, 16];
+      let missTargets = [];
 
-      // Try 1 Triple + 1 Single
-      for (let target of idealTargets) {
-        let needed = remainingScore - target;
-        if (needed > 0) {
-          // Check T20, T19, T18, T17...
-          for (let t = 20; t >= 10; t--) {
-            let remAfterT = needed - (t * 3);
-            if (remAfterT >= 1 && remAfterT <= 20) {
-              return [T(t), S(remAfterT)];
+      if (parsed.type === 'T') {
+        missTargets = [
+          { label: `SI FALLAS AL S${num}`, val: num },
+          { label: `SI FALLAS AL S${adj.left}`, val: adj.left },
+          { label: `SI FALLAS AL S${adj.right}`, val: adj.right },
+          { label: `SI FALLAS AL T${adj.left}`, val: adj.left * 3 },
+          { label: `SI FALLAS AL T${adj.right}`, val: adj.right * 3 }
+        ];
+      } else if (parsed.type === 'S') {
+        if (num === 25) {
+          missTargets = [
+            { label: `SI IMPACTAS DB`, val: 50 },
+            { label: `SI FALLAS AL S20`, val: 20 },
+            { label: `SI FALLAS AL S19`, val: 19 },
+            { label: `SI FALLAS AL S18`, val: 18 },
+            { label: `SI FALLAS AL S16`, val: 16 }
+          ];
+        } else {
+          missTargets = [
+            { label: `SI IMPACTAS T${num}`, val: num * 3 },
+            { label: `SI FALLAS AL S${adj.left}`, val: adj.left },
+            { label: `SI FALLAS AL S${adj.right}`, val: adj.right },
+            { label: `SI IMPACTAS D${num}`, val: num * 2 },
+            { label: `SI IMPACTAS T${adj.left}`, val: adj.left * 3 }
+          ];
+        }
+      } else if (parsed.type === 'D' || parsed.type === 'DB') {
+        if (parsed.type === 'DB') {
+          missTargets = [
+            { label: `SI FALLAS AL 25`, val: 25 },
+            { label: `SI FALLAS AL S20`, val: 20 },
+            { label: `SI FALLAS AL S19`, val: 19 },
+            { label: `SI FALLAS AL S18`, val: 18 },
+            { label: `SI FALLAS AL S16`, val: 16 }
+          ];
+        } else {
+          missTargets = [
+            { label: `SI FALLAS AL S${num}`, val: num },
+            { label: `SI FALLAS AL S${adj.left}`, val: adj.left },
+            { label: `SI FALLAS AL S${adj.right}`, val: adj.right },
+            { label: `SI FALLAS AL D${adj.left}`, val: adj.left * 2 },
+            { label: `SI FALLAS AL D${adj.right}`, val: adj.right * 2 }
+          ];
+        }
+      }
+
+      // Process outcomes for 2 remaining darts
+      return missTargets.map(m => {
+        let remScore = score - m.val;
+        let outcome = {
+          label: m.label,
+          remScore: remScore,
+          type: 'NORMAL', // NORMAL, BUST, FINISH, PREP
+          route: []
+        };
+
+        if (remScore === 0) {
+          outcome.type = 'FINISH';
+        } else if (remScore < 2 || BOGEY_SCORES.has(remScore)) {
+          // Check if there is a 2-dart checkout
+          let sub = get2DartCheckout(remScore);
+          if (sub) {
+            outcome.route = sub;
+          } else {
+            outcome.type = 'BUST';
+          }
+        } else {
+          let sub = get2DartCheckout(remScore);
+          if (sub) {
+            outcome.route = sub;
+          } else {
+            // Preparation shot required
+            outcome.type = 'PREP';
+            // Find best setup dart to leave D16 or D20
+            let setupVal = remScore - 32 > 0 ? remScore - 32 : remScore - 40;
+            if (setupVal > 0 && setupVal <= 20) {
+              outcome.route = [`S${setupVal}`, 'D16'];
+            } else {
+              outcome.route = ['S20', 'PREP'];
             }
           }
         }
-      }
-
-      // Try 2 Singles if score is lower
-      for (let target of idealTargets) {
-        let needed = remainingScore - target;
-        if (needed >= 2 && needed <= 40) {
-          let s1 = Math.min(20, Math.floor(needed / 2));
-          let s2 = needed - s1;
-          if (s1 <= 20 && s2 <= 20 && s2 >= 1) {
-            return [S(s1), S(s2)];
-          }
-        }
-      }
-
-      // Default high score reduction: T20 -> T20
-      return [T(20), T(20)];
+        return outcome;
+      });
     }
 
-    /*
-     * Dynamic 5-Miss Cards Generator for Dart 1
-     */
-    function renderMissCards(targetDart1) {
-      const grid = document.getElementById('missCardsGrid');
-      grid.innerHTML = '';
+    /* ==========================================
+       MAIN RENDER METHOD
+       ========================================== */
+    function renderApp() {
+      // 1. Update Score Display
+      document.getElementById('score-display').innerText = currentScore;
 
-      if (!targetDart1) {
-        grid.innerHTML = `<div class="col-span-full text-center py-6 text-slate-500 font-bold">Sin datos de fallo para este puntaje</div>`;
+      const routeBox = document.getElementById('primary-route-box');
+      const targetText = document.getElementById('dart1-target-text');
+      const contingencyGrid = document.getElementById('contingency-grid');
+
+      // Check if Bogey or Impossible
+      if (BOGEY_SCORES.has(currentScore) || currentScore > 170) {
+        targetText.innerText = "NINGUNO";
+        routeBox.innerHTML = `<div class="bogey-message">Sin cierre en 3 dardos. Tira a T20 para preparar.</div>`;
+        contingencyGrid.innerHTML = `
+          <div class="contingency-card" style="grid-column: 1 / -1;">
+            <div class="card-miss-label">PREPARACIÓN</div>
+            <div class="card-rem-score">Puntaje alto o Bogey</div>
+            <div class="badge-prep">Lanza a T20 / T19</div>
+          </div>
+        `;
         return;
       }
 
-      let misses = [];
+      // Get 3-dart sequence
+      let sequence = get3DartCheckout(currentScore);
 
-      if (targetDart1.type === 'T') {
-        const num = targetDart1.num;
-        const adj = getAdjacentNumbers(num);
-        misses = [
-          { name: `S${num}`, val: num, label: `SI FALLAS AL S${num}` },
-          { name: `S${adj.left}`, val: adj.left, label: `SI FALLAS AL S${adj.left}` },
-          { name: `S${adj.right}`, val: adj.right, label: `SI FALLAS AL S${adj.right}` },
-          { name: `T${adj.left}`, val: adj.left * 3, label: `SI FALLAS AL T${adj.left}` },
-          { name: `T${adj.right}`, val: adj.right * 3, label: `SI FALLAS AL T${adj.right}` },
-        ];
-      } else if (targetDart1.type === 'S') {
-        const num = targetDart1.num;
-        const adj = getAdjacentNumbers(num);
-        misses = [
-          { name: `T${num}`, val: num * 3, label: `SI FALLAS AL T${num}` },
-          { name: `S${adj.left}`, val: adj.left, label: `SI FALLAS AL S${adj.left}` },
-          { name: `S${adj.right}`, val: adj.right, label: `SI FALLAS AL S${adj.right}` },
-          { name: `D${num}`, val: num * 2, label: `SI FALLAS AL D${num}` },
-          { name: `T${adj.left}`, val: adj.left * 3, label: `SI FALLAS AL T${adj.left}` },
-        ];
-      } else if (targetDart1.type === 'D') {
-        const num = targetDart1.num === 25 ? 25 : targetDart1.num;
-        if (num === 25) {
-          misses = [
-            { name: '25', val: 25, label: 'SI FALLAS A 25' },
-            { name: 'S20', val: 20, label: 'SI FALLAS A S20' },
-            { name: 'S19', val: 19, label: 'SI FALLAS A S19' },
-            { name: 'S18', val: 18, label: 'SI FALLAS A S18' },
-            { name: 'S16', val: 16, label: 'SI FALLAS A S16' },
-          ];
+      if (!sequence || sequence.length === 0) {
+        targetText.innerText = "PREPARAR";
+        routeBox.innerHTML = `<div class="bogey-message">Busca preparar un doble seguro (D16 / D20)</div>`;
+        contingencyGrid.innerHTML = ``;
+        return;
+      }
+
+      // 2. Render Target Pill (Dart 1)
+      targetText.innerText = sequence[0];
+
+      // 3. Render Primary Route Box
+      let routeHTML = sequence.map(d => formatDartHTML(d)).join('<span class="arrow-sep">→</span>');
+      routeBox.innerHTML = routeHTML;
+
+      // 4. Generate & Render 5 Contingencies for Dart 1
+      let contingencies = generateContingencies(currentScore, sequence[0]);
+
+      let gridHTML = "";
+      contingencies.forEach(c => {
+        gridHTML += `<div class="contingency-card">`;
+        gridHTML += `  <div class="card-miss-label">${c.label}</div>`;
+        gridHTML += `  <div class="card-rem-score">queda <strong>${c.remScore}</strong></div>`;
+
+        if (c.type === 'FINISH') {
+          gridHTML += `  <div class="badge-finish">¡CIERRE!</div>`;
+        } else if (c.type === 'BUST') {
+          gridHTML += `  <div class="badge-bust">BUST / SIN CIERRE</div>`;
+        } else if (c.type === 'PREP') {
+          gridHTML += `  <div class="badge-prep">PREPARAR</div>`;
+          gridHTML += `  <div class="card-route">${c.route.map(d => formatDartHTML(d)).join('<span class="arrow-sep">→</span>')}</div>`;
         } else {
-          const adj = getAdjacentNumbers(num);
-          misses = [
-            { name: `S${num}`, val: num, label: `SI FALLAS ADENTRO (S${num})` },
-            { name: `AFUERA (0)`, val: 0, label: `SI FALLAS AFUERA (0)` },
-            { name: `S${adj.left}`, val: adj.left, label: `SI FALLAS A S${adj.left}` },
-            { name: `S${adj.right}`, val: adj.right, label: `SI FALLAS A S${adj.right}` },
-            { name: `D${adj.left}`, val: adj.left * 2, label: `SI FALLAS A D${adj.left}` },
-          ];
-        }
-      }
-
-      // Generate Card HTML for Each Miss
-      misses.forEach((miss, idx) => {
-        const remScore = currentScore - miss.val;
-        const card = document.createElement('div');
-
-        // Card Styling States
-        if (remScore < 0 || remScore === 1) {
-          // BUST State
-          card.className = 'bg-red-950/30 border-2 border-red-600/60 rounded-2xl p-3.5 flex flex-col justify-between items-center text-center shadow-lg relative overflow-hidden';
-          card.innerHTML = `
-            <span class="text-[11px] font-black tracking-wider text-red-400 uppercase">${miss.label}</span>
-            <div class="my-2">
-              <span class="text-xs text-red-300 block font-semibold">queda ${remScore}</span>
-              <span class="text-3xl font-black text-red-500 tracking-wider">BUST</span>
-            </div>
-            <span class="text-[10px] text-red-400/80 font-bold bg-red-500/20 px-2 py-0.5 rounded-full border border-red-500/30">Se pasa de puntos</span>
-          `;
-        } else if (remScore === 0) {
-          // WIN / CHECKOUT State
-          card.className = 'bg-emerald-950/40 border-2 border-emerald-500 rounded-2xl p-3.5 flex flex-col justify-between items-center text-center shadow-lg relative overflow-hidden';
-          card.innerHTML = `
-            <span class="text-[11px] font-black tracking-wider text-emerald-400 uppercase">${miss.label}</span>
-            <div class="my-2">
-              <span class="text-xs text-emerald-300 block font-semibold">queda 0</span>
-              <span class="text-3xl font-black text-emerald-400 tracking-wider">¡CIERRE!</span>
-            </div>
-            <span class="text-[10px] text-emerald-300 font-bold bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">¡JUEGO GANADO!</span>
-          `;
-        } else {
-          // Valid Remaining Score -> Calculate 2-Dart Finish or Prep
-          const finish2Dart = solve2DartCheckout(remScore);
-          
-          if (finish2Dart) {
-            // Direct 2-dart checkout available
-            card.className = 'bg-cardDark border border-borderDark hover:border-yellow-400/40 rounded-2xl p-3.5 flex flex-col justify-between items-center text-center shadow-md transition';
-            
-            let routeHTML = finish2Dart.map(step => {
-              let color = 'text-white';
-              if (step.type === 'T') color = 'text-dartRed font-black';
-              else if (step.type === 'D') color = 'text-dartYellow font-black';
-              return `<span class="${color}">${step.name}</span>`;
-            }).join(' <span class="text-slate-500 text-xs">→</span> ');
-
-            card.innerHTML = `
-              <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">${miss.label}</span>
-              <div class="my-2">
-                <span class="text-xs text-slate-300 font-semibold block">queda <strong class="text-white text-base">${remScore}</strong></span>
-              </div>
-              <div class="text-xl sm:text-2xl font-black tracking-tight my-1">
-                ${routeHTML}
-              </div>
-            `;
-          } else {
-            // Setup / Prep throw needed (>110 or 2-dart bogey)
-            const prepRoute = calculate2DartSetup(remScore);
-            card.className = 'bg-cardDark border-2 border-dartBlue/40 rounded-2xl p-3.5 flex flex-col justify-between items-center text-center shadow-md relative overflow-hidden';
-            
-            let routeHTML = prepRoute.map(step => {
-              let color = 'text-white';
-              if (step.type === 'T') color = 'text-dartRed font-black';
-              else if (step.type === 'D') color = 'text-dartYellow font-black';
-              return `<span class="${color}">${step.name}</span>`;
-            }).join(' <span class="text-slate-500 text-xs">→</span> ');
-
-            card.innerHTML = `
-              <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">${miss.label}</span>
-              <div class="my-1.5 flex items-center gap-1.5">
-                <span class="text-xs text-slate-300 font-semibold">queda <strong class="text-white text-base">${remScore}</strong></span>
-                <span class="text-[9px] font-extrabold bg-dartBlue/20 text-dartBlue border border-dartBlue/30 px-1.5 py-0.5 rounded">PREP</span>
-              </div>
-              <div class="text-xl sm:text-2xl font-black tracking-tight my-1">
-                ${routeHTML}
-              </div>
-            `;
-          }
+          gridHTML += `  <div class="card-route">${c.route.map(d => formatDartHTML(d)).join('<span class="arrow-sep">→</span>')}</div>`;
         }
 
-        grid.appendChild(card);
+        gridHTML += `</div>`;
       });
-    }
 
-
-    /* ================= KEYPAD MODAL LOGIC ================= */
-    function openKeypad() {
-      keypadBufferString = currentScore.toString();
-      document.getElementById('keypadBuffer').innerText = keypadBufferString;
-      document.getElementById('keypadModal').classList.remove('hidden');
-    }
-
-    function closeKeypad() {
-      document.getElementById('keypadModal').classList.add('hidden');
-    }
-
-    function pressKey(numStr) {
-      if (keypadBufferString === "0") keypadBufferString = "";
-      if (keypadBufferString.length < 3) {
-        keypadBufferString += numStr;
-        document.getElementById('keypadBuffer').innerText = keypadBufferString;
-      }
-    }
-
-    function backspaceKeypad() {
-      if (keypadBufferString.length > 0) {
-        keypadBufferString = keypadBufferString.slice(0, -1);
-        document.getElementById('keypadBuffer').innerText = keypadBufferString || "0";
-      }
-    }
-
-    function clearKeypad() {
-      keypadBufferString = "";
-      document.getElementById('keypadBuffer').innerText = "0";
-    }
-
-    function setKeypadScore(val) {
-      keypadBufferString = val.toString();
-      document.getElementById('keypadBuffer').innerText = keypadBufferString;
-      applyKeypadScore();
-    }
-
-    function applyKeypadScore() {
-      let val = parseInt(keypadBufferString, 10);
-      if (isNaN(val) || val < 2) val = 2;
-      if (val > 170) val = 170;
-      currentScore = val;
-      renderApp();
-      closeKeypad();
-    }
-
-    /* ================= INFO MODAL LOGIC ================= */
-    function openInfoModal() {
-      document.getElementById('infoModal').classList.remove('hidden');
-    }
-
-    function closeInfoModal() {
-      document.getElementById('infoModal').classList.add('hidden');
-    }
-
-    /* ================= PHYSICAL KEYBOARD SHORTCUTS ================= */
-    function setupPhysicalKeyboard() {
-      document.addEventListener('keydown', (e) => {
-        // Handle Escape to close modals
-        if (e.key === 'Escape') {
-          closeKeypad();
-          closeInfoModal();
-          return;
-        }
-
-        // Handle Numbers 0-9
-        if (e.key >= '0' && e.key <= '9') {
-          const keypadModal = document.getElementById('keypadModal');
-          if (keypadModal.classList.contains('hidden')) {
-            openKeypad();
-            keypadBufferString = e.key;
-          } else {
-            pressKey(e.key);
-          }
-          document.getElementById('keypadBuffer').innerText = keypadBufferString;
-          return;
-        }
-
-        // Handle Backspace
-        if (e.key === 'Backspace') {
-          const keypadModal = document.getElementById('keypadModal');
-          if (!keypadModal.classList.contains('hidden')) {
-            backspaceKeypad();
-          }
-          return;
-        }
-
-        // Handle Enter to Confirm
-        if (e.key === 'Enter') {
-          const keypadModal = document.getElementById('keypadModal');
-          if (!keypadModal.classList.contains('hidden')) {
-            applyKeypadScore();
-          }
-        }
-      });
+      contingencyGrid.innerHTML = gridHTML;
     }
   </script>
-
 </body>
 </html>
