@@ -1,1429 +1,1066 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-[#05070A]">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asistente de Cierres</title>
-  <link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Asistente de Cierres · Bogotá Dardos Club</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="shortcut icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <meta name="theme-color" content="#05070A" />
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  <!-- Tailwind CSS & Inter Font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            darkbg: '#05070A',
+            cardbg: '#121722',
+            cardborder: '#1E293B',
+            accentyellow: '#FACC15',
+            accentred: '#EF4444',
+            accentblue: '#0284C7',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos responsive personalizados */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #05070A;
+      color: #F8FAFC;
+      user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
-      background-color: #05070A;
-      color: #F8FAFC;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: hidden;
+    .brand-logo {
+      height: 2.5rem;
+      width: auto;
+      object-fit: contain;
     }
 
-    /* Container max width */
-    .app-container {
-      width: 100%;
-      max-width: 1180px;
-      padding: 14px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* Header Card */
-    .header-card {
-      background-color: #0E131D;
-      border: 1px solid #1E2636;
-      border-radius: 16px;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    /* CSS Toggle Switch */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #1E2636;
-      transition: .3s;
-      border-radius: 24px;
-      border: 1px solid #334155;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #0284C7;
-      border-color: #38BDF8;
-    }
-    input:checked + .slider:before {
-      transform: translateX(20px);
-    }
-
-    /* Hero Card */
-    .hero-card {
-      background-color: #0E131D;
-      border: 1px solid #1E2636;
-      border-radius: 20px;
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-    }
-
-    /* 3-segment pill selector */
-    .segment-selector {
-      background-color: #05070A;
-      border: 1px solid #1E2636;
-      border-radius: 9999px;
-      padding: 4px;
-      display: flex;
-      gap: 4px;
-    }
-    .segment-btn {
-      padding: 6px 16px;
-      border-radius: 9999px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #94A3B8;
-      transition: all 0.2s ease;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
-    .segment-btn.active {
-      background-color: #FACC15;
-      color: #000000;
-      box-shadow: 0 2px 8px rgba(250, 204, 21, 0.25);
-    }
-
-    /* Score Display */
-    .score-display {
-      font-size: clamp(4.8rem, 10vw, 7.5rem);
-      font-weight: 900;
-      color: #FACC15;
+    /* Tipografía fluida gigante */
+    .score-giant {
+      font-size: clamp(4.5rem, 11vw, 8.2rem);
       line-height: 1;
-      letter-spacing: -0.03em;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.1s ease;
-    }
-    .score-display:active {
-      transform: scale(0.97);
     }
 
-    /* Badge Styling Rules */
-    .badge-triple {
-      background-color: #EF4444;
-      color: #FFFFFF;
-      font-weight: 900;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    }
-    .badge-single {
-      background-color: #FFFFFF;
-      color: #000000;
-      font-weight: 900;
-    }
-    .badge-double {
-      background-color: #FACC15;
-      color: #000000;
-      font-weight: 900;
-    }
-    .prep-pill {
-      background-color: #0284C7;
-      color: #FFFFFF;
-      font-weight: 700;
-      border-radius: 9999px;
-      padding: 4px 14px;
-      font-size: 0.95rem;
-      letter-spacing: 0.02em;
+    .badge-giant {
+      font-size: clamp(2.2rem, 5.5vw, 4.8rem);
+      padding: clamp(0.5rem, 1.5vw, 1.25rem) clamp(1rem, 2.8vw, 2.2rem);
     }
 
-    /* Route Row Badges */
-    .hero-route-badge {
+    /* Grid de tarjetas de fallo */
+    .failures-grid {
+      display: grid;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    /* Desktop y Landscape Tablet: 3 arriba, 2 abajo centradas */
+    @media (min-width: 1024px) {
+      .failures-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .failure-card-item {
+        grid-column: span 2;
+      }
+      .failure-card-item:nth-child(4) {
+        grid-column: 2 / span 2;
+      }
+      .failure-card-item:nth-child(5) {
+        grid-column: 4 / span 2;
+      }
+    }
+
+    /* Tablet vertical (768px a 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .failures-grid {
+        grid-template-columns: 1fr;
+      }
+      .failure-card-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+      }
+    }
+
+    /* Celular vertical (<= 767px) */
+    @media (max-width: 767px) {
+      .failures-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Celular horizontal (max-height 540px landscape) */
+    @media (max-height: 540px) and (orientation: landscape) {
+      .landscape-split {
+        display: grid;
+        grid-template-columns: 46% 54%;
+        gap: 1rem;
+        align-items: start;
+      }
+      .header-compact {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+      }
+      .score-giant {
+        font-size: 3.5rem;
+      }
+      .badge-giant {
+        font-size: 1.8rem;
+        padding: 0.4rem 0.8rem;
+      }
+    }
+
+    /* Estilo para los dardos */
+    .dart-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-sizing: border-box;
-      white-space: nowrap;
-      flex-shrink: 0;
-      width: fit-content;
-    }
-
-    @media (min-width: 640px) {
-      .hero-route-badge {
-        font-size: clamp(3rem, 6.2vw, 5.4rem);
-        padding: 14px 28px;
-        border-radius: 18px;
-      }
-      .miss-route-badge {
-        font-size: clamp(2.1rem, 3.6vw, 3.2rem);
-        padding: 10px 18px;
-        border-radius: 14px;
-      }
-    }
-
-    @media (max-width: 639px) {
-      .hero-route-badge {
-        font-size: clamp(1.95rem, 7.5vw, 2.8rem);
-        padding: 10px 14px;
-        border-radius: 12px;
-      }
-      .miss-route-badge {
-        font-size: clamp(1.7rem, 6.5vw, 2.4rem);
-        padding: 8px 14px;
-        border-radius: 12px;
-      }
-    }
-
-    .arrow-sep {
-      color: #64748B;
-      font-weight: 700;
-      user-select: none;
-    }
-
-    /* Miss Cards Grid Layout */
-    .miss-grid-desktop {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: 100%;
-    }
-    .miss-row-top {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      width: 100%;
-    }
-    .miss-row-bottom {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      width: 100%;
-    }
-    .miss-row-bottom > .miss-card {
-      width: calc(50% - 7px);
-      max-width: 480px;
-    }
-
-    .miss-card {
-      background-color: #0E131D;
-      border: 1px solid #1E2636;
-      border-radius: 16px;
-      padding: 14px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      width: 100%;
-    }
-    .miss-card:hover {
-      border-color: #334155;
-      transform: translateY(-2px);
-      background-color: #131A29;
-    }
-    .miss-card:active {
-      transform: translateY(0);
-    }
-
-    /* Mobile Landscape split screen */
-    @media (max-height: 500px) and (orientation: landscape) {
-      .app-container {
-        flex-direction: row;
-        max-width: 100%;
-        height: 100vh;
-        padding: 10px;
-        gap: 10px;
-      }
-      .hero-section {
-        width: 44%;
-        height: 100%;
-        overflow-y: auto;
-      }
-      .miss-section {
-        width: 56%;
-        height: 100%;
-        overflow-y: auto;
-      }
-      .miss-row-top, .miss-row-bottom {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .miss-row-bottom > .miss-card {
-        width: 100%;
-      }
-    }
-
-    /* Modal Backdrop */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(5, 7, 10, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-    .modal-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-card {
-      background-color: #0E131D;
-      border: 1px solid #1E2636;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 420px;
-      padding: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
-    }
-
-    .keypad-btn {
-      background-color: #161F30;
-      border: 1px solid #2A364F;
-      border-radius: 12px;
-      color: #FFFFFF;
-      font-size: 1.4rem;
+      border-radius: 0.75rem;
       font-weight: 800;
-      padding: 14px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background-color 0.1s ease;
-    }
-    .keypad-btn:active {
-      background-color: #FACC15;
-      color: #000000;
+      letter-spacing: -0.02em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: transform 0.1s ease;
     }
 
-    /* Toast notification */
-    #voiceToast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background-color: #0284C7;
-      color: #FFFFFF;
-      padding: 10px 20px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 2000;
-      pointer-events: none;
+    .dart-badge:active {
+      transform: scale(0.96);
     }
-    #voiceToast.show {
-      transform: translateX(-50%) translateY(0);
+
+    .dart-T {
+      background-color: #EF4444;
+      color: #FFFFFF;
+    }
+
+    .dart-D {
+      background-color: #FACC15;
+      color: #0F172A;
+    }
+
+    .dart-S {
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+
+    .dart-BULL {
+      background-color: #22C55E;
+      color: #FFFFFF;
+    }
+
+    .dart-DBULL {
+      background-color: #DC2626;
+      color: #FFFFFF;
+      border: 2px solid #FACC15;
+    }
+
+    /* Animación del micrófono en escucha */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .mic-active {
+      animation: pulse-ring 1.8s infinite;
+      background-color: #EF4444 !important;
+      color: #FFFFFF !important;
     }
   </style>
 </head>
-<body>
+<body class="h-full flex flex-col justify-between overflow-x-hidden antialiased">
 
-  <div class="app-container">
-
-    <!-- Header Bar -->
-    <header class="header-card">
-      <div class="flex items-center" style="margin-left: 0;">
-        <img src="logo.png" alt="Bogotá Dardos Club" class="brand-logo" style="height:44px;width:auto;object-fit:contain;display:block;flex-shrink:0;margin-right:12px;" onerror="this.style.display='none'">
-        <div class="flex flex-col">
-          <span style="font-size: 1.35rem; font-weight: 800; color: #FFFFFF; line-height: 1.1;">Asistente de Cierres</span>
-          <span style="font-size: 0.72rem; font-weight: 800; color: #FACC15; letter-spacing: 0.08em; line-height: 1;">BOGOTÁ DARDOS CLUB</span>
+  <!-- BARRA SUPERIOR RESPONSIVA -->
+  <header class="w-full bg-[#0B0F17] border-b border-slate-800/80 px-4 py-3 sticky top-0 z-30 header-compact">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      
+      <!-- Logo + Títulos -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div class="flex items-center gap-3">
+          <img src="logo.png" alt="Bogotá Dardos Club" class="brand-logo" onerror="this.onerror=null; this.src='https://placehold.co/100x100/121722/FACC15?text=BDC';" />
+          <div>
+            <h1 class="text-lg md:text-xl font-bold text-slate-100 tracking-tight leading-none">
+              Asistente de Cierres
+            </h1>
+            <p class="text-xs font-extrabold text-amber-400 tracking-wider uppercase mt-0.5">
+              BOGOTÁ DARDOS CLUB
+            </p>
+          </div>
         </div>
+
+        <!-- Botón de menú ayuda en celular (Row 1 a la derecha) -->
+        <button onclick="toggleHelpModal()" class="md:hidden p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/60 border border-slate-700/50">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
       </div>
 
-      <!-- Controls Right -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Voice Button -->
-        <button id="btnVoice" onclick="toggleVoice()" class="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#161F30] border border-[#2A364F] hover:bg-[#1E2C45] transition text-sm font-bold text-white">
-          <svg id="micIcon" class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z"></path>
-          </svg>
+      <!-- Controles Superiores Derecha -->
+      <div class="flex items-center justify-between md:justify-end gap-2.5 w-full md:w-auto pt-2 md:pt-0 border-t border-slate-800/60 md:border-t-0">
+        
+        <!-- Botón Voz -->
+        <button id="btnVoice" onclick="toggleVoice()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3.5 py-1.5 rounded-full text-xs font-semibold transition active:scale-95">
+          <svg id="micIcon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
           <span id="voiceBtnText">Voz</span>
         </button>
 
-        <!-- Continuous Toggle -->
-        <div class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full bg-[#05070A] border border-[#1E2636]" style="flex-shrink: 0;">
-          <span style="font-size: 0.78rem; font-weight: 700; color: #94A3B8; margin-left: 6px;">Continuo</span>
-          <label class="switch">
-            <input type="checkbox" id="continuousToggle" onchange="onContinuousToggleChange()">
-            <span class="slider"></span>
-          </label>
-        </div>
+        <!-- Switch Continuo en Contenedor Pill Perfecto -->
+        <label class="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 px-3 py-1.5 rounded-full cursor-pointer transition select-none">
+          <span class="text-xs font-semibold text-slate-300">Continuo</span>
+          <div class="relative inline-flex items-center">
+            <input type="checkbox" id="continuousToggle" class="sr-only peer" onchange="handleContinuousChange()" />
+            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+          </div>
+        </label>
 
-        <!-- Score Modal Opener -->
-        <button onclick="openKeypad()" class="px-3.5 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-black font-extrabold text-sm transition shadow-md flex items-center justify-center">
-          + Puntaje
+        <!-- Botón Amarillo + Puntaje -->
+        <button onclick="openNumpad()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3.5 py-1.5 rounded-full text-xs shadow-lg shadow-amber-400/10 transition active:scale-95 flex items-center gap-1">
+          <span>+ Puntaje</span>
         </button>
 
-        <!-- Help Button -->
-        <button onclick="openHelp()" class="w-9 h-9 rounded-xl bg-[#161F30] border border-[#2A364F] hover:bg-[#1E2C45] text-white font-bold flex items-center justify-center transition">
-          ?
+        <!-- Botón Ayuda Desktop -->
+        <button onclick="toggleHelpModal()" class="hidden md:flex p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/60 border border-slate-700/50 hover:bg-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
       </div>
-    </header>
 
-    <!-- Main Content Split for Mobile Landscape / Standard Layout -->
-    <div class="flex flex-col lg:flex-col gap-4 w-full hero-section">
+    </div>
+  </header>
 
-      <!-- Hero Card (Cierre Actual) -->
-      <main class="hero-card">
-        <!-- Top controls row -->
-        <div class="w-full flex justify-between items-center">
-          <div class="segment-selector">
-            <button id="seg3" onclick="setDarts(3)" class="segment-btn active">3 dardos</button>
-            <button id="seg2" onclick="setDarts(2)" class="segment-btn">2 dardos</button>
-            <button id="seg1" onclick="setDarts(1)" class="segment-btn">1 dardo</button>
+  <!-- BANNER DISCRETO DE ESTADO DE VOZ -->
+  <div id="voiceBanner" class="hidden w-full bg-slate-900/90 border-b border-amber-500/30 px-4 py-1.5 text-center transition-all">
+    <span class="text-xs font-medium text-amber-300" id="voiceBannerText">Escuchando...</span>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-7xl mx-auto w-full px-3 md:px-6 py-4 md:py-6 flex-1 flex flex-col justify-center">
+    
+    <div class="landscape-split">
+
+      <!-- TARJETA PRINCIPAL: PUNTAJE Y RUTA RECOMENDADA -->
+      <section class="flex flex-col items-center text-center">
+        
+        <!-- Score & Darts Card -->
+        <div class="w-full bg-[#121722] border border-slate-800/80 rounded-2xl p-4 md:p-6 shadow-2xl relative mb-4">
+          
+          <!-- Selector de Dardos -->
+          <div class="flex justify-center items-center gap-2 mb-3">
+            <div class="inline-flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <button id="btnDart3" onclick="setDarts(3)" class="px-3 py-1 rounded-lg text-xs font-bold transition">3 dardos</button>
+              <button id="btnDart2" onclick="setDarts(2)" class="px-3 py-1 rounded-lg text-xs font-bold transition">2 dardos</button>
+              <button id="btnDart1" onclick="setDarts(1)" class="px-3 py-1 rounded-lg text-xs font-bold transition">1 dardo</button>
+            </div>
           </div>
-          <button onclick="undo()" class="px-3.5 py-1.5 rounded-xl bg-[#161F30] border border-[#2A364F] hover:bg-[#1E2C45] text-xs font-bold text-slate-300 transition flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-            Atrás
-          </button>
+
+          <!-- Puntaje Gigante Interactivo -->
+          <div onclick="openNumpad()" class="cursor-pointer group py-1 transition transform active:scale-95">
+            <span id="scoreDisplay" class="score-giant font-black text-amber-400 tracking-tighter drop-shadow-md group-hover:text-amber-300 transition">
+              170
+            </span>
+          </div>
+
+          <!-- Botones de Ajuste Rápido y Atrás -->
+          <div class="flex items-center justify-center gap-3 mt-3">
+            <button onclick="changeScore(-1)" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700/70 text-slate-200 text-lg font-extrabold transition active:scale-90 flex items-center justify-center">
+              −
+            </button>
+            <button onclick="undoState()" id="btnUndo" class="px-4 h-10 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700/70 text-slate-300 text-xs font-bold transition active:scale-95 flex items-center gap-1.5">
+              <span>↩ Atrás</span>
+            </button>
+            <button onclick="changeScore(1)" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700/70 text-slate-200 text-lg font-extrabold transition active:scale-90 flex items-center justify-center">
+              +
+            </button>
+          </div>
         </div>
 
-        <!-- Score Row -->
-        <div class="flex items-center gap-4 sm:gap-8 my-1">
-          <button onclick="adjustScore(-1)" class="w-11 h-11 rounded-full bg-[#161F30] border border-[#2A364F] hover:bg-[#1E2C45] text-slate-200 text-2xl font-bold flex items-center justify-center transition">
-            -
-          </button>
-          <div id="scoreVal" class="score-display" onclick="openKeypad()">121</div>
-          <button onclick="adjustScore(1)" class="w-11 h-11 rounded-full bg-[#161F30] border border-[#2A364F] hover:bg-[#1E2C45] text-slate-200 text-2xl font-bold flex items-center justify-center transition">
-            +
-          </button>
+        <!-- Ruta Principal Recomendada -->
+        <div class="w-full bg-[#121722] border border-slate-800/80 rounded-2xl p-4 md:p-6 shadow-2xl mb-4">
+          <div id="mainRouteContainer" class="flex items-center justify-center gap-2 md:gap-4 flex-nowrap overflow-x-auto py-2">
+            <!-- Badges renderizados dinámicamente -->
+          </div>
         </div>
 
-        <!-- Preparation Target Pill (Only shown if current route is prep) -->
-        <div id="prepBadgeContainer" class="hidden">
-          <span id="prepBadgeText" class="prep-pill">Deja D20</span>
-        </div>
+      </section>
 
-        <!-- Main Route Row -->
-        <div id="heroRouteRow" class="flex items-center justify-center gap-2 sm:gap-3 w-full overflow-x-auto py-2">
-          <!-- Dynamically populated badges -->
-        </div>
-      </main>
-
-      <!-- Miss Reaction Cards Section -->
-      <section id="missSection" class="miss-section w-full flex flex-col gap-3">
-        <div class="flex justify-between items-center px-1">
-          <h2 id="missSectionTitle" class="text-xs sm:text-sm font-extrabold text-slate-400 tracking-wider uppercase">
-            REACCIÓN ANTE FALLO EN DARDO 1
-          </h2>
-        </div>
-
-        <!-- Grid Container -->
-        <div id="missGridContainer" class="w-full">
-          <!-- Dynamically populated miss cards -->
+      <!-- TARJETAS DE FALLO (VISIBLES EN 3 Y 2 DARDOS) -->
+      <section id="failuresSection" class="w-full">
+        <div id="failuresGrid" class="failures-grid">
+          <!-- 5 tarjetas de fallo renderizadas dinámicamente -->
         </div>
       </section>
 
     </div>
 
-  </div>
+  </main>
 
-  <!-- KEYPAD MODAL -->
-  <div id="keypadModal" class="modal-backdrop" onclick="closeKeypadOnBackdrop(event)">
-    <div class="modal-card flex flex-col gap-4">
-      <div class="flex justify-between items-center border-b border-[#1E2636] pb-3">
-        <h3 class="text-lg font-extrabold text-white">Ingresar Puntaje</h3>
-        <button onclick="closeKeypad()" class="text-slate-400 hover:text-white font-bold text-xl px-2">&times;</button>
+  <!-- PIE DE PÁGINA -->
+  <footer class="w-full text-center py-3 text-xs text-slate-500 border-t border-slate-900 bg-[#05070A]">
+    <span>Bogotá Dardos Club · Asistente Oficial v2.4 Final</span>
+  </footer>
+
+  <!-- MODAL TECLADO NUMÉRICO -->
+  <div id="numpadModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#121722] border border-slate-800 rounded-3xl p-5 md:p-6 w-full max-w-sm shadow-2xl flex flex-col gap-4">
+      
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-slate-200">Ingresar Puntaje Restante</h3>
+        <button onclick="closeNumpad()" class="text-slate-400 hover:text-white text-xl p-1">✕</button>
       </div>
 
-      <!-- Preview Score -->
-      <div class="bg-[#05070A] border border-[#1E2636] rounded-xl p-3 text-center">
-        <span id="keypadInputVal" class="text-4xl font-black text-[#FACC15]">0</span>
+      <!-- Preview de Entrada -->
+      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-right">
+        <span id="numpadValue" class="text-4xl font-extrabold text-amber-400 tracking-tight">0</span>
       </div>
 
-      <!-- Preset Row -->
-      <div class="grid grid-cols-6 gap-1.5">
-        <button onclick="setKeypadPreset(170)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">170</button>
-        <button onclick="setKeypadPreset(140)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">140</button>
-        <button onclick="setKeypadPreset(100)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">100</button>
-        <button onclick="setKeypadPreset(80)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">80</button>
-        <button onclick="setKeypadPreset(60)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">60</button>
-        <button onclick="setKeypadPreset(40)" class="py-1.5 bg-[#161F30] hover:bg-[#1E2C45] rounded-lg text-xs font-bold text-slate-300">40</button>
+      <!-- Accesos Rápidos -->
+      <div class="grid grid-cols-4 gap-2">
+        <button onclick="setQuickScore(170)" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 rounded-xl text-xs border border-slate-700/60">170</button>
+        <button onclick="setQuickScore(121)" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 rounded-xl text-xs border border-slate-700/60">121</button>
+        <button onclick="setQuickScore(105)" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 rounded-xl text-xs border border-slate-700/60">105</button>
+        <button onclick="setQuickScore(85)" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 rounded-xl text-xs border border-slate-700/60">85</button>
       </div>
 
-      <!-- Keypad Buttons Grid -->
+      <!-- Teclado Numérico -->
       <div class="grid grid-cols-3 gap-2">
-        <button onclick="keypadPress('1')" class="keypad-btn">1</button>
-        <button onclick="keypadPress('2')" class="keypad-btn">2</button>
-        <button onclick="keypadPress('3')" class="keypad-btn">3</button>
-        <button onclick="keypadPress('4')" class="keypad-btn">4</button>
-        <button onclick="keypadPress('5')" class="keypad-btn">5</button>
-        <button onclick="keypadPress('6')" class="keypad-btn">6</button>
-        <button onclick="keypadPress('7')" class="keypad-btn">7</button>
-        <button onclick="keypadPress('8')" class="keypad-btn">8</button>
-        <button onclick="keypadPress('9')" class="keypad-btn">9</button>
-        <button onclick="keypadPress('C')" class="keypad-btn text-red-400">C</button>
-        <button onclick="keypadPress('0')" class="keypad-btn">0</button>
-        <button onclick="keypadPress('DEL')" class="keypad-btn text-yellow-400">⌫</button>
+        <button onclick="appendNum('7')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">7</button>
+        <button onclick="appendNum('8')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">8</button>
+        <button onclick="appendNum('9')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">9</button>
+        
+        <button onclick="appendNum('4')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">4</button>
+        <button onclick="appendNum('5')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">5</button>
+        <button onclick="appendNum('6')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">6</button>
+        
+        <button onclick="appendNum('1')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">1</button>
+        <button onclick="appendNum('2')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">2</button>
+        <button onclick="appendNum('3')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">3</button>
+        
+        <button onclick="clearNumpad()" class="bg-rose-950/60 hover:bg-rose-900/80 text-rose-400 font-bold text-sm py-3 rounded-xl border border-rose-800/40 active:scale-95">C</button>
+        <button onclick="appendNum('0')" class="bg-slate-800/80 hover:bg-slate-700 text-white font-extrabold text-xl py-3 rounded-xl border border-slate-700/40 active:scale-95">0</button>
+        <button onclick="backspaceNumpad()" class="bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-bold text-sm py-3 rounded-xl border border-slate-700/40 active:scale-95">⌫</button>
       </div>
 
-      <!-- Submit Button -->
-      <button onclick="confirmKeypad()" class="w-full py-3 bg-[#FACC15] hover:bg-[#EAB308] text-black font-extrabold text-base rounded-xl transition shadow-lg mt-1">
-        Aceptar
+      <!-- Confirmar -->
+      <button onclick="confirmNumpad()" class="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-base py-3.5 rounded-2xl shadow-lg shadow-amber-400/20 transition active:scale-95 mt-1">
+        Confirmar Puntaje
       </button>
+
     </div>
   </div>
 
-  <!-- HELP MODAL -->
-  <div id="helpModal" class="modal-backdrop" onclick="closeHelpOnBackdrop(event)">
-    <div class="modal-card flex flex-col gap-4 max-w-lg">
-      <div class="flex justify-between items-center border-b border-[#1E2636] pb-3">
-        <h3 class="text-lg font-extrabold text-white">Ayuda & Control de Voz</h3>
-        <button onclick="closeHelp()" class="text-slate-400 hover:text-white font-bold text-xl px-2">&times;</button>
+  <!-- MODAL AYUDA / INSTRUCCIONES -->
+  <div id="helpModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#121722] border border-slate-800 rounded-3xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+        <h3 class="text-lg font-bold text-amber-400">Instrucciones y Comandos</h3>
+        <button onclick="toggleHelpModal()" class="text-slate-400 hover:text-white text-xl p-1">✕</button>
       </div>
-
-      <div class="flex flex-col gap-3 text-sm text-slate-300 overflow-y-auto max-h-[65vh] pr-1">
+      <div class="space-y-4 text-xs text-slate-300">
         <div>
-          <h4 class="font-bold text-white mb-1">Comandos de Voz (Español):</h4>
-          <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
-            <li><span class="text-[#FACC15] font-bold">"cierre 123"</span> / <span class="text-[#FACC15] font-bold">"tengo 85"</span>: Cambia el puntaje actual.</li>
-            <li><span class="text-[#FACC15] font-bold">"cayó 20"</span> / <span class="text-[#FACC15] font-bold">"sencillo 19"</span> / <span class="text-[#FACC15] font-bold">"triple 5"</span>: Registra el dardo lanzado.</li>
-            <li><span class="text-[#FACC15] font-bold">"doble 10"</span> / <span class="text-[#FACC15] font-bold">"bull"</span>: Registra doble o diana.</li>
-            <li><span class="text-[#FACC15] font-bold">"afuera"</span> / <span class="text-[#FACC15] font-bold">"cero"</span>: Dardo fallado (0 puntos).</li>
-            <li><span class="text-[#FACC15] font-bold">"atrás"</span> / <span class="text-[#FACC15] font-bold">"deshacer"</span>: Vuelve al estado anterior.</li>
-            <li><span class="text-[#FACC15] font-bold">Barra Espaciadora</span>: Enciende / apaga el micrófono.</li>
+          <h4 class="font-bold text-white text-sm mb-1">Control por Voz</h4>
+          <p>Presiona el botón <span class="text-amber-400">"Voz"</span> para activar el reconocimiento en español (Colombia). Si activas <span class="text-amber-400">"Continuo"</span>, el sistema se reiniciará automáticamente tras cada comando.</p>
+          <ul class="list-disc pl-4 mt-1.5 space-y-1 text-slate-400">
+            <li><strong>Establecer puntaje:</strong> "123", "cierre 85", "me toca 105".</li>
+            <li><strong>Restar impacto:</strong> "cayó 20", "sencillo 5", "triple 20", "doble 10", "bull".</li>
+            <li><strong>Deshacer:</strong> "atrás" o "deshacer".</li>
           </ul>
         </div>
-
-        <div class="border-t border-[#1E2636] pt-2">
-          <h4 class="font-bold text-white mb-1">Código de Colores:</h4>
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded badge-triple text-xs font-black">T20</span>
-              <span>Triples (Rojo)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded badge-double text-xs font-black">D20</span>
-              <span>Dobles/Bull (Amarillo)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded badge-single text-xs font-black">S20</span>
-              <span>Sencillos (Blanco)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded prep-pill text-xs font-bold">Deja D20</span>
-              <span>Preparación (Azul)</span>
-            </div>
-          </div>
+        <div>
+          <h4 class="font-bold text-white text-sm mb-1">Reglas Especiales de Cierre</h4>
+          <ul class="list-disc pl-4 space-y-1 text-slate-400">
+            <li><strong>Regla Paracaídas (61–70 en 2 dardos):</strong> Orientada a Bull (ej. 70 = T20 → D5, 65 = T15 → D10).</li>
+            <li><strong>Protección Lateral (101–110 en 3 dardos):</strong> Protege ante fallos en sencillos vecinos (ej. 105 = T20 → S5 → D20).</li>
+            <li><strong>Puntajes sin cierre (169, 168, 166, 165, 163, 162, 159):</strong> Preparan estratégicamente para dejar D20.</li>
+          </ul>
         </div>
-
-        <div class="border-t border-[#1E2636] pt-2 text-xs text-slate-400">
-          Bogotá Dardos Club • v2.3 Asistente de Cierres de Alta Precisión.
+        <div>
+          <h4 class="font-bold text-white text-sm mb-1">Teclado y Atajos</h4>
+          <p class="text-slate-400">Usa las teclas numéricas, <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700">Enter</kbd> o <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700">Espacio</kbd> en el teclado emergente, y <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700">Backspace</kbd> para deshacer.</p>
         </div>
       </div>
+      <button onclick="toggleHelpModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl mt-5">Entendido</button>
     </div>
   </div>
 
-  <!-- Voice Toast -->
-  <div id="voiceToast">Escuchado: "..."</div>
-
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- LÓGICA DE APLICACIÓN COMPLETA -->
   <script>
-    // --- DARTBOARD NEIGHBOR MAP ---
-    const BOARD = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+    // ESTADO DE LA APLICACIÓN
+    let currentScore = 170;
+    let remainingDarts = 3;
+    let undoStack = [];
+    let numpadInput = "0";
 
-    // Priority order for favorite doubles
-    const FAVORITE_DOUBLES = [40, 32, 36, 24, 20, 16, 28, 12, 8, 50];
-
-    // --- STATE MANAGEMENT ---
-    let state = {
-      score: 121,
-      darts: 3
+    // MAPA DE VECINOS EN EL DIANA DARDOS (Sentido horario)
+    const BOARD_NEIGHBORS = {
+      20: [5, 1], 19: [3, 7], 18: [1, 4], 17: [2, 3], 16: [7, 8],
+      15: [10, 2], 14: [11, 9], 13: [4, 6], 12: [9, 5], 11: [8, 14],
+      10: [6, 15], 9: [14, 12], 8: [16, 11], 7: [19, 16], 6: [13, 10],
+      5: [12, 20], 4: [18, 13], 3: [17, 19], 2: [15, 17], 1: [20, 18]
     };
 
-    let historyStack = [];
-
-    // --- AUDITED 3-DART CHECKOUT TABLE (111 to 170) ---
-    const TABLE_3D = {
-      170: ['T20', 'T20', 'DB'],
-      167: ['T20', 'T19', 'DB'],
-      164: ['T20', 'T18', 'DB'],
-      161: ['T20', 'T17', 'DB'],
-      160: ['T20', 'T20', 'D20'],
-      158: ['T20', 'T20', 'D19'],
-      157: ['T20', 'T19', 'D20'],
-      156: ['T20', 'T20', 'D18'],
-      155: ['T20', 'T19', 'D19'],
-      154: ['T20', 'T18', 'D20'],
-      153: ['T20', 'T19', 'D18'],
-      152: ['T20', 'T20', 'D16'],
-      151: ['T20', 'T17', 'D20'],
-      150: ['T20', 'T18', 'D18'],
-      149: ['T20', 'T19', 'D16'],
-      148: ['T20', 'T20', 'D14'],
-      147: ['T20', 'T17', 'D18'],
-      146: ['T20', 'T18', 'D16'],
-      145: ['T20', 'T15', 'D20'],
-      144: ['T20', 'T20', 'D12'],
-      143: ['T20', 'T17', 'D16'],
-      142: ['T20', 'T14', 'D20'],
-      141: ['T20', 'T19', 'D12'],
-      140: ['T20', 'T20', 'D10'],
-      139: ['T19', 'T14', 'D20'],
-      138: ['T20', 'T18', 'D12'],
-      137: ['T19', 'T16', 'D16'],
-      136: ['T20', 'T20', 'D8'],
-      135: ['T20', 'T17', 'D12'],
-      134: ['T20', 'T14', 'D16'],
-      133: ['T20', 'T19', 'D8'],
-      132: ['T20', 'T16', 'D12'],
-      131: ['T20', 'T13', 'D16'],
-      130: ['T20', 'T20', 'D5'],
-      129: ['T19', 'T20', 'D8'],
-      128: ['T20', 'T18', 'D7'],
-      127: ['T20', 'T17', 'D8'],
-      126: ['T19', 'T19', 'D6'],
-      125: ['T20', 'T19', 'D7'],
-      124: ['T20', 'T16', 'D8'],
-      123: ['T19', 'T16', 'D9'],
-      122: ['T18', 'T20', 'D4'],
-      121: ['T20', 'T11', 'D14'],
-      120: ['T20', 'S20', 'D20'],
-      119: ['T19', 'T10', 'D16'],
-      118: ['T20', 'S18', 'D20'],
-      117: ['T20', 'S17', 'D20'],
-      116: ['T20', 'S16', 'D20'],
-      115: ['T20', 'S15', 'D20'],
-      114: ['T20', 'S14', 'D20'],
-      113: ['T19', 'S16', 'D20'],
-      112: ['T20', 'S12', 'D20'],
-      111: ['T20', 'S19', 'D16'],
-      110: ['T20', 'S18', 'D16'],
-      107: ['T19', 'S18', 'D16'],
-      105: ['T20', 'S5', 'D20'],
-      104: ['T18', 'S18', 'D16'],
-      103: ['T19', 'S6', 'D20'],
-      101: ['T20', 'S9', 'D16'],
-      99:  ['T19', 'S10', 'D16']
+    // INICIALIZACIÓN
+    window.onload = function() {
+      render();
+      setupKeyboardListeners();
     };
 
-    // --- AUDITED 2-DART CHECKOUT TABLE (41 to 100) ---
-    const TABLE_2D = {
-      100: ['T20', 'D20'],
-      98: ['T20', 'D19'],
-      97: ['T19', 'D20'],
-      96: ['T20', 'D18'],
-      95: ['T19', 'D19'],
-      94: ['T18', 'D20'],
-      93: ['T19', 'D18'],
-      92: ['T20', 'D16'],
-      91: ['T17', 'D20'],
-      90: ['T18', 'D18'],
-      89: ['T19', 'D16'],
-      88: ['T16', 'D20'],
-      87: ['T17', 'D18'],
-      86: ['T18', 'D16'],
-      85: ['T15', 'D20'],
-      84: ['T20', 'D12'],
-      83: ['T17', 'D16'],
-      82: ['T14', 'D20'],
-      81: ['T19', 'D12'],
-      80: ['T20', 'D10'],
-      79: ['T19', 'D11'],
-      78: ['T18', 'D12'],
-      77: ['T19', 'D10'],
-      76: ['T20', 'D8'],
-      75: ['T17', 'D12'],
-      74: ['T14', 'D16'],
-      73: ['T19', 'D8'],
-      72: ['T16', 'D12'],
-      71: ['T13', 'D16'],
-      // 61-70 Parachute-to-Bull 2-dart Finishes
-      70: ['T20', 'D5'],
-      69: ['T19', 'D6'],
-      68: ['T18', 'D7'],
-      67: ['T17', 'D8'],
-      66: ['T16', 'D9'],
-      65: ['T15', 'D10'],
-      64: ['T14', 'D11'],
-      63: ['T13', 'D12'],
-      62: ['T12', 'D13'],
-      61: ['T11', 'D14'],
-      // 41-60 Standard Single + Double
-      60: ['S20', 'D20'],
-      59: ['S19', 'D20'],
-      58: ['S18', 'D20'],
-      57: ['S17', 'D20'],
-      56: ['S16', 'D20'],
-      55: ['S15', 'D20'],
-      54: ['S14', 'D20'],
-      53: ['S13', 'D20'],
-      52: ['S20', 'D16'],
-      51: ['S19', 'D16'],
-      50: ['S18', 'D16'],
-      49: ['S17', 'D16'],
-      48: ['S16', 'D16'],
-      47: ['S15', 'D16'],
-      46: ['S14', 'D16'],
-      45: ['S13', 'D16'],
-      44: ['S12', 'D16'],
-      43: ['S11', 'D16'],
-      42: ['S10', 'D16'],
-      41: ['S9', 'D16']
-    };
+    // GUARDAR HISTORIAL PARA "ATRÁS"
+    function pushState() {
+      undoStack.push({
+        score: currentScore,
+        darts: remainingDarts
+      });
+      if (undoStack.length > 30) undoStack.shift();
+    }
 
-    // 2-dart bull-ending checkouts
-    const TABLE_2D_BULL = {
-      110: ['T20', 'DB'],
-      107: ['T19', 'DB'],
-      104: ['T18', 'DB'],
-      101: ['T17', 'DB']
-    };
-
-    // --- CHECKOUT & PREPARATION ENGINE ---
-    function getCheckout(score, darts) {
-      if (score <= 1 || score > 170) {
-        return { route: ['-'], isCheckout: false, prepText: null };
+    function undoState() {
+      if (undoStack.length > 0) {
+        const last = undoStack.pop();
+        currentScore = last.score;
+        remainingDarts = last.darts;
+        render();
       }
+    }
 
-      // --- 1 DARDO ---
+    function setDarts(n) {
+      if (remainingDarts === n) return;
+      pushState();
+      remainingDarts = n;
+      render();
+    }
+
+    function changeScore(delta) {
+      const next = currentScore + delta;
+      if (next >= 2 && next <= 170) {
+        pushState();
+        currentScore = next;
+        render();
+      }
+    }
+
+    function setScoreDirect(val) {
+      val = Math.max(2, Math.min(170, val));
+      pushState();
+      currentScore = val;
+      render();
+    }
+
+    // CÁLCULO DE VALOR DE UN DARDO
+    function getDartValue(dartStr) {
+      if (!dartStr) return 0;
+      if (dartStr === 'DBull' || dartStr === '50') return 50;
+      if (dartStr === 'Bull' || dartStr === '25') return 25;
+      const type = dartStr[0];
+      const num = parseInt(dartStr.substring(1), 10);
+      if (isNaN(num)) return 0;
+      if (type === 'T') return num * 3;
+      if (type === 'D') return num * 2;
+      if (type === 'S') return num;
+      return 0;
+    }
+
+    // MOTOR DE CIERRES AUDITADO
+    function calculateRoute(score, darts) {
+      // Caso 1 dardo
       if (darts === 1) {
-        if (score === 50) {
-          return { route: ['DB'], isCheckout: true, prepText: null };
-        }
+        if (score === 50) return { route: ['DBull'], isCheckout: true };
         if (score <= 40 && score % 2 === 0) {
-          return { route: ['D' + (score / 2)], isCheckout: true, prepText: null };
+          return { route: [`D${score / 2}`], isCheckout: true };
         }
-
-        // Preparation with 1 dart
-        // Find single or triple leaving favorite double
-        let bestDart = null;
-        let targetDoubleText = null;
-
-        // Try single numbers 1..20
-        for (let fav of FAVORITE_DOUBLES) {
-          let reqSingle = score - fav;
-          if (reqSingle >= 1 && reqSingle <= 20) {
-            bestDart = 'S' + reqSingle;
-            targetDoubleText = fav === 50 ? 'Deja DB' : ('Deja D' + (fav / 2));
-            break;
-          }
-        }
-
-        // Try triple numbers 1..20
-        if (!bestDart) {
-          for (let fav of FAVORITE_DOUBLES) {
-            let rem = score - fav;
-            if (rem > 0 && rem % 3 === 0) {
-              let tNum = rem / 3;
-              if (tNum >= 1 && tNum <= 20) {
-                bestDart = 'T' + tNum;
-                targetDoubleText = fav === 50 ? 'Deja DB' : ('Deja D' + (fav / 2));
-                break;
-              }
-            }
-          }
-        }
-
-        // Fallback for 1 dart: any single leaving even score <= 40
-        if (!bestDart) {
-          for (let s = 20; s >= 1; s--) {
-            let rem = score - s;
-            if (rem > 0 && rem <= 40 && rem % 2 === 0) {
-              bestDart = 'S' + s;
-              targetDoubleText = 'Deja D' + (rem / 2);
+        // No hay cierre en 1 dardo: sugerir mejor tiro de preparación
+        let bestTarget = 'S20';
+        let bestLeave = 40; // D20 ideal
+        if (score > 60) {
+          // Intentar dejar D16 (32) o D20 (40) con un Triple
+          for (let t = 20; t >= 1; t--) {
+            const rem = score - (t * 3);
+            if (rem === 40 || rem === 32 || rem === 24 || rem === 16) {
+              bestTarget = `T${t}`;
+              bestLeave = rem;
               break;
             }
           }
-        }
-
-        // High score fallback (e.g. > 60)
-        if (!bestDart) {
-          if (score > 60) {
-            bestDart = 'T20';
-            let rem = score - 60;
-            targetDoubleText = 'Deja ' + rem;
+        } else {
+          // Intentar dejar D20 (40) con un sencillo
+          const needSingle = score - 40;
+          if (needSingle >= 1 && needSingle <= 20) {
+            bestTarget = `S${needSingle}`;
+            bestLeave = 40;
           } else {
-            bestDart = 'S' + Math.min(score - 2, 20);
-            let rem = score - Math.min(score - 2, 20);
-            targetDoubleText = rem % 2 === 0 ? ('Deja D' + (rem / 2)) : ('Deja ' + rem);
+            const needSingle16 = score - 32;
+            if (needSingle16 >= 1 && needSingle16 <= 20) {
+              bestTarget = `S${needSingle16}`;
+              bestLeave = 32;
+            }
           }
         }
-
-        return { route: [bestDart], isCheckout: false, prepText: targetDoubleText };
+        const leaveText = (bestLeave === 40) ? 'D20' : (bestLeave === 32) ? 'D16' : (bestLeave % 2 === 0 ? `D${bestLeave/2}` : `${bestLeave}`);
+        return { route: [bestTarget], isCheckout: false, leaveText: `Deja ${leaveText}` };
       }
 
-      // --- 2 DARDOS ---
+      // Tabla fija de 2 dardos (2 a 110)
       if (darts === 2) {
-        // Direct 1-dart checkout with 2 darts in hand
-        if (score === 50) return { route: ['DB'], isCheckout: true, prepText: null };
-        if (score <= 40 && score % 2 === 0) return { route: ['D' + (score / 2)], isCheckout: true, prepText: null };
+        // Regla Paracaídas 61-70 a Bull obligatoria
+        const parachute = {
+          70: ['T20', 'D5'], 69: ['T19', 'D6'], 68: ['T18', 'D7'],
+          67: ['T17', 'D8'], 66: ['T16', 'D9'], 65: ['T15', 'D10'],
+          64: ['T14', 'D11'], 63: ['T13', 'D12'], 62: ['T12', 'D13'],
+          61: ['T11', 'D14']
+        };
+        if (parachute[score]) return { route: parachute[score], isCheckout: true };
 
-        // 2-dart checkout table lookups
-        if (TABLE_2D_BULL[score]) {
-          return { route: TABLE_2D_BULL[score], isCheckout: true, prepText: null };
-        }
-        if (TABLE_2D[score]) {
-          return { route: TABLE_2D[score], isCheckout: true, prepText: null };
+        // Sobrescrituras requeridas de 2 dardos
+        if (score === 85) return { route: ['T15', 'D20'], isCheckout: true };
+        if (score === 90) return { route: ['T18', 'D18'], isCheckout: true };
+        if (score === 83) return { route: ['T17', 'D16'], isCheckout: true };
+        if (score === 82) return { route: ['T14', 'D20'], isCheckout: true };
+
+        // Tabla estándar de 2 dardos
+        const fixed2 = {
+          110: ['T20', 'DBull'], 107: ['T19', 'DBull'], 104: ['T18', 'DBull'], 101: ['T17', 'DBull'],
+          100: ['T20', 'D20'], 98: ['T20', 'D19'], 97: ['T19', 'D20'], 96: ['T20', 'D18'],
+          95: ['T19', 'D19'], 94: ['T18', 'D20'], 93: ['T19', 'D18'], 92: ['T20', 'D16'],
+          91: ['T17', 'D20'], 89: ['T19', 'D16'], 88: ['T20', 'D14'], 87: ['T17', 'D18'],
+          86: ['T18', 'D16'], 84: ['T20', 'D12'], 81: ['T19', 'D12'], 80: ['T20', 'D10'],
+          79: ['T13', 'D20'], 78: ['T18', 'D12'], 77: ['T19', 'D10'], 76: ['T20', 'D8'],
+          75: ['T17', 'D12'], 74: ['T14', 'D16'], 73: ['T19', 'D8'], 72: ['T16', 'D12'], 71: ['T13', 'D16'],
+          60: ['S20', 'D20'], 59: ['S19', 'D20'], 58: ['S18', 'D20'], 57: ['S17', 'D20'],
+          56: ['S16', 'D20'], 55: ['S15', 'D20'], 54: ['S14', 'D20'], 53: ['S13', 'D20'],
+          52: ['S12', 'D20'], 51: ['S11', 'D20'], 50: ['S10', 'D20'], 49: ['S9', 'D20'],
+          48: ['S16', 'D16'], 47: ['S15', 'D16'], 46: ['S14', 'D16'], 45: ['S13', 'D16'],
+          44: ['S12', 'D16'], 43: ['S11', 'D16'], 42: ['S10', 'D16'], 41: ['S9', 'D16']
+        };
+
+        if (fixed2[score]) return { route: fixed2[score], isCheckout: true };
+
+        // Par <= 40 en 2 dardos -> Usar directo el doble o preparación
+        if (score <= 40 && score % 2 === 0) {
+          return { route: [`D${score/2}`], isCheckout: true };
         }
 
-        // Odd numbers 3..39 with 2 darts
-        if (score >= 3 && score <= 39 && score % 2 !== 0) {
-          let route = getOdd2DartCheckout(score);
-          return { route: route, isCheckout: true, prepText: null };
+        // Impares <= 39 en 2 dardos
+        if (score <= 39 && score % 2 !== 0) {
+          if (score === 39) return { route: ['S7', 'D16'], isCheckout: true };
+          if (score === 37) return { route: ['S5', 'D16'], isCheckout: true };
+          if (score === 35) return { route: ['S3', 'D16'], isCheckout: true };
+          if (score === 33) return { route: ['S1', 'D16'], isCheckout: true };
+          if (score === 31) return { route: ['S15', 'D8'], isCheckout: true };
+          if (score === 29) return { route: ['S13', 'D8'], isCheckout: true };
+          if (score === 27) return { route: ['S11', 'D8'], isCheckout: true };
+          if (score === 25) return { route: ['S9', 'D8'], isCheckout: true };
+          if (score === 23) return { route: ['S7', 'D8'], isCheckout: true };
+          if (score === 21) return { route: ['S5', 'D8'], isCheckout: true };
+          if (score === 19) return { route: ['S3', 'D8'], isCheckout: true };
+          if (score === 17) return { route: ['S1', 'D8'], isCheckout: true };
+          if (score === 15) return { route: ['S7', 'D4'], isCheckout: true };
+          if (score === 13) return { route: ['S5', 'D4'], isCheckout: true };
+          if (score === 11) return { route: ['S3', 'D4'], isCheckout: true };
+          if (score === 9) return { route: ['S1', 'D4'], isCheckout: true };
+          if (score === 7) return { route: ['S3', 'D2'], isCheckout: true };
+          if (score === 5) return { route: ['S1', 'D2'], isCheckout: true };
+          if (score === 3) return { route: ['S1', 'D1'], isCheckout: true };
         }
 
-        // 2-dart Preparation (Unfinishable with 2 darts: 99, 102, 103, 105, 106, 108, 109, >=111)
-        let prep = get2DartPrep(score);
-        return prep;
+        // Si es mayor a 110 con 2 dardos -> No hay cierre de 2 dardos, preparar
+        const rem = score - 60;
+        return { route: ['T20'], isCheckout: false, leaveText: `Deja ${rem}` };
       }
 
-      // --- 3 DARDOS ---
+      // Tabla fija de 3 dardos (Scores 2 a 170)
       if (darts === 3) {
-        // Shortest-darts rule: 2..100 (except 99) ALWAYS use 1-dart or 2-dart checkout!
+        // Para 2-100 (excepto 99), usar siempre la ruta más corta de 2 dardos
         if (score <= 100 && score !== 99) {
-          let res2 = getCheckout(score, 2);
-          if (res2.isCheckout) return res2;
+          const res2 = calculateRoute(score, 2);
+          return { route: res2.route, isCheckout: true };
         }
 
-        // Check 3-dart audited table
-        if (TABLE_3D[score]) {
-          return { route: TABLE_3D[score], isCheckout: true, prepText: null };
-        }
+        // Protecciones laterales obligatorias en 101-110
+        const protections = {
+          101: ['T20', 'S1', 'D20'], 102: ['T20', 'S2', 'D20'], 103: ['T20', 'S3', 'D20'],
+          104: ['T20', 'S4', 'D20'], 105: ['T20', 'S5', 'D20'], 106: ['T20', 'S6', 'D20'],
+          107: ['T19', 'S10', 'D20'], 108: ['T20', 'S8', 'D20'], 109: ['T20', 'S9', 'D20'],
+          110: ['T20', 'S10', 'D20'], 99: ['T19', 'S10', 'D16']
+        };
+        if (protections[score]) return { route: protections[score], isCheckout: true };
 
-        // 61-70 comfortable 3-dart finishes
-        if (score >= 61 && score <= 70) {
-          const map60_3d = {
-            70: ['T10', 'D20'],
-            69: ['T19', 'D6'],
-            68: ['T20', 'D4'],
-            67: ['T17', 'D8'],
-            66: ['T10', 'D18'],
-            65: ['T19', 'D4'],
-            64: ['T16', 'D8'],
-            63: ['T13', 'D12'],
-            62: ['T10', 'D16'],
-            61: ['T15', 'D8']
-          };
-          return { route: map60_3d[score], isCheckout: true, prepText: null };
-        }
+        // Puntajes sin cierre en 3 dardos (orientados a dejar D20)
+        const noOuts3 = {
+          169: { route: ['T20', 'T19', 'S12'], leaveText: 'Deja D20' },
+          168: { route: ['T20', 'T18', 'S14'], leaveText: 'Deja D20' },
+          166: { route: ['T20', 'T18', 'S12'], leaveText: 'Deja D20' },
+          165: { route: ['T20', 'T19', 'S8'], leaveText: 'Deja D20' },
+          163: { route: ['T20', 'T17', 'S12'], leaveText: 'Deja D20' },
+          162: { route: ['T20', 'T18', 'S8'], leaveText: 'Deja D20' },
+          159: { route: ['T20', 'T19', 'S2'], leaveText: 'Deja D20' }
+        };
+        if (noOuts3[score]) return { route: noOuts3[score].route, isCheckout: false, leaveText: noOuts3[score].leaveText };
 
-        // 3-dart Bogey numbers & Unfinishables (169, 168, 166, 165, 163, 162, 159, >170)
-        let prep = get3DartPrep(score);
-        return prep;
+        // Tabla Estándar 111 a 170
+        const fixed3 = {
+          170: ['T20', 'T20', 'DBull'], 167: ['T20', 'T19', 'DBull'], 164: ['T20', 'T18', 'DBull'],
+          161: ['T20', 'T17', 'DBull'], 160: ['T20', 'T20', 'D20'], 158: ['T20', 'T20', 'D19'],
+          157: ['T20', 'T19', 'D20'], 156: ['T20', 'T20', 'D18'], 155: ['T20', 'T19', 'D19'],
+          154: ['T20', 'T18', 'D20'], 153: ['T20', 'T19', 'D18'], 152: ['T20', 'T20', 'D16'],
+          151: ['T20', 'T17', 'D20'], 150: ['T20', 'T18', 'D18'], 149: ['T20', 'T19', 'D16'],
+          148: ['T20', 'T16', 'D20'], 147: ['T20', 'T17', 'D16'], 146: ['T20', 'T18', 'D16'],
+          145: ['T20', 'T15', 'D20'], 144: ['T20', 'T20', 'D12'], 143: ['T20', 'T17', 'D16'],
+          142: ['T20', 'T14', 'D20'], 141: ['T20', 'T15', 'D18'], 140: ['T20', 'T20', 'D10'],
+          139: ['T20', 'T13', 'D20'], 138: ['T20', 'T18', 'D12'], 137: ['T19', 'T16', 'D16'],
+          136: ['T20', 'T20', 'D8'], 135: ['T20', 'T15', 'D15'], 134: ['T20', 'T14', 'D16'],
+          133: ['T20', 'T19', 'D8'], 132: ['T20', 'T16', 'D12'], 131: ['T20', 'T13', 'D16'],
+          130: ['T20', 'T20', 'D5'], 129: ['T19', 'T20', 'D6'], 128: ['T18', 'T14', 'D16'],
+          127: ['T20', 'T17', 'D8'], 126: ['T19', 'T19', 'D6'], 125: ['25', 'T20', 'D20'],
+          124: ['T20', 'T16', 'D8'], 123: ['T19', 'T16', 'D9'], 122: ['T18', 'T20', 'D4'],
+          121: ['T20', 'T15', 'D8'], 120: ['T20', 'S20', 'D20'], 119: ['T19', 'T10', 'D16'],
+          118: ['T20', 'S18', 'D20'], 117: ['T20', 'S17', 'D20'], 116: ['T20', 'S16', 'D20'],
+          115: ['T20', 'S15', 'D20'], 114: ['T20', 'S14', 'D20'], 113: ['T19', 'S16', 'D20'],
+          112: ['T20', 'S12', 'D20'], 111: ['T20', 'S11', 'D20']
+        };
+
+        if (fixed3[score]) return { route: fixed3[score], isCheckout: true };
+
+        if (score > 170) {
+          return { route: ['T20', 'T20', 'T20'], isCheckout: false, leaveText: `Deja ${score - 180}` };
+        }
       }
 
-      return { route: ['-'], isCheckout: false, prepText: null };
+      return { route: ['T20'], isCheckout: false, leaveText: `Deja ${score - 60}` };
     }
 
-    // Helper: Odd 2-dart finishes (3 to 39)
-    function getOdd2DartCheckout(score) {
-      if (score === 39) return ['S7', 'D16'];
-      if (score === 37) return ['S5', 'D16'];
-      if (score === 35) return ['S3', 'D16'];
-      if (score === 33) return ['S1', 'D16'];
-      if (score === 31) return ['S15', 'D8'];
-      if (score === 29) return ['S13', 'D8'];
-      if (score === 27) return ['S11', 'D8'];
-      if (score === 25) return ['S9', 'D8'];
-      if (score === 23) return ['S7', 'D8'];
-      if (score === 21) return ['S5', 'D8'];
-      if (score === 19) return ['S3', 'D8'];
-      if (score === 17) return ['S1', 'D8'];
-      if (score === 15) return ['S7', 'D4'];
-      if (score === 13) return ['S5', 'D4'];
-      if (score === 11) return ['S3', 'D4'];
-      if (score === 9)  return ['S1', 'D4'];
-      if (score === 7)  return ['S3', 'D2'];
-      if (score === 5)  return ['S1', 'D2'];
-      if (score === 3)  return ['S1', 'D1'];
-      return ['S1', 'D' + ((score - 1) / 2)];
-    }
+    // GENERADOR DE TARJETAS DE FALLO DINÁMICAS (5 CASOS EXACTOS)
+    function generateMissCards(score, darts, firstDart) {
+      if (darts <= 1) return [];
 
-    // Helper: 2-dart Preparation logic
-    function get2DartPrep(score) {
-      if (score > 160) {
-        let rem = score - 120;
-        return { route: ['T20', 'T20'], isCheckout: false, prepText: 'Deja ' + rem };
-      }
-
-      // Try combos leaving D20 (40) first, then D16 (32), D18 (36), etc.
-      for (let fav of FAVORITE_DOUBLES) {
-        let needed = score - fav;
-        if (needed > 0 && needed <= 80) {
-          // Can we do T20 + S(needed-60)?
-          if (needed > 60 && needed <= 80) {
-            let sVal = needed - 60;
-            if (sVal >= 1 && sVal <= 20) {
-              let label = fav === 50 ? 'Deja DB' : ('Deja D' + (fav / 2));
-              return { route: ['T20', 'S' + sVal], isCheckout: false, prepText: label };
-            }
-          }
-          // Can we do T19 + S(needed-57)?
-          if (needed > 57 && needed <= 77) {
-            let sVal = needed - 57;
-            if (sVal >= 1 && sVal <= 20) {
-              let label = fav === 50 ? 'Deja DB' : ('Deja D' + (fav / 2));
-              return { route: ['T19', 'S' + sVal], isCheckout: false, prepText: label };
-            }
-          }
-          // Single + Single?
-          if (needed <= 40) {
-            let d1 = Math.min(20, Math.floor(needed / 2));
-            let d2 = needed - d1;
-            if (d1 >= 1 && d1 <= 20 && d2 >= 1 && d2 <= 20) {
-              let label = fav === 50 ? 'Deja DB' : ('Deja D' + (fav / 2));
-              return { route: ['S' + d1, 'S' + d2], isCheckout: false, prepText: label };
-            }
-          }
-        }
-      }
-
-      // Fallback 2-dart prep
-      return { route: ['T20', 'S20'], isCheckout: false, prepText: 'Deja ' + (score - 80) };
-    }
-
-    // Helper: 3-dart Preparation logic
-    function get3DartPrep(score) {
-      const bogeys = {
-        169: { route: ['T20', 'T20', 'S9'], prep: 'Deja D20' },
-        168: { route: ['T20', 'T20', 'S8'], prep: 'Deja D20' },
-        166: { route: ['T20', 'T20', 'S6'], prep: 'Deja D20' },
-        165: { route: ['T20', 'T20', 'S5'], prep: 'Deja D20' },
-        163: { route: ['T20', 'T20', 'S3'], prep: 'Deja D20' },
-        162: { route: ['T20', 'T20', 'S2'], prep: 'Deja D20' },
-        159: { route: ['T20', 'T20', 'S7'], prep: 'Deja D16' }
-      };
-
-      if (bogeys[score]) {
-        return { route: bogeys[score].route, isCheckout: false, prepText: bogeys[score].prep };
-      }
-
-      if (score > 170) {
-        let rem = score - 120;
-        return { route: ['T20', 'T20', 'T20'], isCheckout: false, prepText: 'Deja ' + (score - 180) };
-      }
-
-      return { route: ['T20', 'T20', 'S20'], isCheckout: false, prepText: 'Deja ' + (score - 140) };
-    }
-
-    // --- UI RENDER ENGINE ---
-    function render() {
-      // 1. Update Score Display
-      document.getElementById('scoreVal').innerText = state.score;
-
-      // 2. Update Segment Selector
-      ['seg3', 'seg2', 'seg1'].forEach((id, idx) => {
-        const btn = document.getElementById(id);
-        if (3 - idx === state.darts) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-
-      // 3. Compute Main Route
-      const mainRes = getCheckout(state.score, state.darts);
-
-      // 4. Update Hero Prep Badge Container (ONLY if prep & not checkout)
-      const prepBadgeContainer = document.getElementById('prepBadgeContainer');
-      const prepBadgeText = document.getElementById('prepBadgeText');
-      if (!mainRes.isCheckout && mainRes.prepText) {
-        prepBadgeText.innerText = mainRes.prepText;
-        prepBadgeContainer.classList.remove('hidden');
-      } else {
-        prepBadgeContainer.classList.add('hidden');
-      }
-
-      // 5. Render Main Route Badges
-      const heroRouteRow = document.getElementById('heroRouteRow');
-      heroRouteRow.innerHTML = '';
-      mainRes.route.forEach((badgeStr, idx) => {
-        if (idx > 0) {
-          const arrow = document.createElement('span');
-          arrow.className = 'arrow-sep text-xl sm:text-3xl';
-          arrow.innerText = '→';
-          heroRouteRow.appendChild(arrow);
-        }
-        const b = createBadgeElement(badgeStr, true);
-        heroRouteRow.appendChild(b);
-      });
-
-      // 6. Render Miss Reaction Cards Section
-      const missSection = document.getElementById('missSection');
-      const missSectionTitle = document.getElementById('missSectionTitle');
-      const missGridContainer = document.getElementById('missGridContainer');
-
-      // Hide miss section if in 1 dardo mode OR if remaining darts == 1
-      if (state.darts === 1 || mainRes.route.length === 1 && mainRes.isCheckout) {
-        missSection.style.display = 'none';
-        return;
-      }
-      missSection.style.display = 'flex';
-
-      // Update section title
-      const currentDartNum = state.darts === 3 ? 1 : (state.darts === 2 ? 2 : 3);
-      missSectionTitle.innerText = `REACCIÓN ANTE FALLO EN DARDO ${currentDartNum}`;
-
-      // Extract target dart (first dart of current main route)
-      const targetDartStr = mainRes.route[0];
-      const missCardsData = computeMissCards(targetDartStr, state.score, state.darts);
-
-      // Build 2-row layout structure for Desktop/Tablet landscape & vertical stack for mobile
-      missGridContainer.innerHTML = '';
-      const gridWrapper = document.createElement('div');
-      gridWrapper.className = 'miss-grid-desktop';
-
-      const topRow = document.createElement('div');
-      topRow.className = 'miss-row-top';
-
-      const bottomRow = document.createElement('div');
-      bottomRow.className = 'miss-row-bottom';
-
-      missCardsData.forEach((cardData, idx) => {
-        const cardElem = createMissCardElement(cardData);
-        if (idx < 3) {
-          topRow.appendChild(cardElem);
-        } else {
-          bottomRow.appendChild(cardElem);
-        }
-      });
-
-      gridWrapper.appendChild(topRow);
-      gridWrapper.appendChild(bottomRow);
-      missGridContainer.appendChild(gridWrapper);
-    }
-
-    // Helper: Create individual badge element
-    function createBadgeElement(badgeStr, isHero = false) {
-      const span = document.createElement('span');
-      let typeClass = 'badge-single';
-
-      if (badgeStr.startsWith('T')) {
-        typeClass = 'badge-triple';
-      } else if (badgeStr.startsWith('D') || badgeStr === 'DB') {
-        typeClass = 'badge-double';
-      } else if (badgeStr.startsWith('S') || badgeStr === '25') {
-        typeClass = 'badge-single';
-      }
-
-      const sizeClass = isHero ? 'hero-route-badge' : 'miss-route-badge';
-      span.className = `${sizeClass} ${typeClass}`;
-      span.innerText = badgeStr;
-      return span;
-    }
-
-    // Helper: Compute 5 miss reaction cards
-    function computeMissCards(targetDartStr, currentScore, currentDarts) {
-      if (!targetDartStr || targetDartStr === '-') return [];
-
+      let missEvents = [];
       let targetNum = 20;
-      if (targetDartStr.startsWith('T') || targetDartStr.startsWith('D') || targetDartStr.startsWith('S')) {
-        targetNum = parseInt(targetDartStr.substring(1), 10);
-      } else if (targetDartStr === 'DB' || targetDartStr === '25') {
-        targetNum = 25;
+      let targetType = 'T';
+
+      if (firstDart === 'DBull' || firstDart === 'Bull' || firstDart === '25' || firstDart === '50') {
+        missEvents = [
+          { label: 'Si cae Bull', scoreVal: 25 },
+          { label: 'Si cae S20', scoreVal: 20 },
+          { label: 'Si cae S1', scoreVal: 1 },
+          { label: 'Si cae S5', scoreVal: 5 },
+          { label: 'Si cae Fuera', scoreVal: 0 }
+        ];
+      } else {
+        targetType = firstDart[0];
+        targetNum = parseInt(firstDart.substring(1), 10) || 20;
+        const neighbors = BOARD_NEIGHBORS[targetNum] || [5, 1];
+        const nLeft = neighbors[0];
+        const nRight = neighbors[1];
+
+        if (targetType === 'T') {
+          missEvents = [
+            { label: `Si cae S${targetNum}`, scoreVal: targetNum },
+            { label: `Si cae S${nLeft}`, scoreVal: nLeft },
+            { label: `Si cae S${nRight}`, scoreVal: nRight },
+            { label: `Si cae T${nLeft}`, scoreVal: nLeft * 3 },
+            { label: `Si cae T${nRight}`, scoreVal: nRight * 3 }
+          ];
+        } else if (targetType === 'D') {
+          missEvents = [
+            { label: `Si cae S${targetNum}`, scoreVal: targetNum },
+            { label: `Si cae S${nLeft}`, scoreVal: nLeft },
+            { label: `Si cae S${nRight}`, scoreVal: nRight },
+            { label: `Si cae Fuera`, scoreVal: 0 },
+            { label: `Si cae D${nLeft}`, scoreVal: nLeft * 2 }
+          ];
+        } else {
+          // Sencillo (S)
+          missEvents = [
+            { label: `Si cae S${nLeft}`, scoreVal: nLeft },
+            { label: `Si cae S${nRight}`, scoreVal: nRight },
+            { label: `Si cae T${targetNum}`, scoreVal: targetNum * 3 },
+            { label: `Si cae D${targetNum}`, scoreVal: targetNum * 2 },
+            { label: `Si cae T${nLeft}`, scoreVal: nLeft * 3 }
+          ];
+        }
       }
 
-      let leftNeighbor = 5;
-      let rightNeighbor = 1;
+      // Procesar cada fallo y calcular la nueva ruta recomendada
+      return missEvents.map(evt => {
+        const nextScore = score - evt.scoreVal;
+        const nextDarts = darts - 1;
 
-      if (targetNum >= 1 && targetNum <= 20) {
-        let idx = BOARD.indexOf(targetNum);
-        leftNeighbor = BOARD[(idx - 1 + 20) % 20];
-        rightNeighbor = BOARD[(idx + 1) % 20];
-      }
+        if (nextScore <= 1 || nextScore < 0) {
+          return {
+            label: evt.label,
+            hitValue: evt.scoreVal,
+            routeObj: { route: ['BUST'], isCheckout: false }
+          };
+        }
 
-      // 5 Miss Scenarios:
-      // 1. Single same number
-      // 2. Single left neighbor
-      // 3. Single right neighbor
-      // 4. Triple left neighbor
-      // 5. Triple right neighbor
-      const scenarios = [
-        { label: `Si cae S${targetNum}`, dartStr: `S${targetNum}`, impact: targetNum },
-        { label: `Si cae S${leftNeighbor}`, dartStr: `S${leftNeighbor}`, impact: leftNeighbor },
-        { label: `Si cae S${rightNeighbor}`, dartStr: `S${rightNeighbor}`, impact: rightNeighbor },
-        { label: `Si cae T${leftNeighbor}`, dartStr: `T${leftNeighbor}`, impact: 3 * leftNeighbor },
-        { label: `Si cae T${rightNeighbor}`, dartStr: `T${rightNeighbor}`, impact: 3 * rightNeighbor }
-      ];
-
-      return scenarios.map(scen => {
-        let remScore = currentScore - scen.impact;
-        let remDarts = currentDarts - 1;
-        let nextRes = getCheckout(remScore, remDarts);
-
+        const routeObj = calculateRoute(nextScore, nextDarts);
         return {
-          label: scen.label,
-          impact: scen.impact,
-          remScore: remScore,
-          remDarts: remDarts,
-          routeRes: nextRes
+          label: evt.label,
+          hitValue: evt.scoreVal,
+          routeObj: routeObj
         };
       });
     }
 
-    // Helper: Create Miss Card Elem
-    function createMissCardElement(cardData) {
-      const card = document.createElement('div');
-      card.className = 'miss-card';
-
-      // Click event: Apply dart hit, update score and decrement darts
-      card.onclick = () => {
-        pushHistory();
-        if (cardData.remScore <= 1) {
-          // Bust or hit 0
-          if (cardData.remScore === 0 && cardData.routeRes.isCheckout) {
-            showToast('¡Cierre Completado!');
-          }
-          state.score = cardData.remScore <= 0 ? state.score : 0;
-          state.darts = 3;
-        } else {
-          state.score = cardData.remScore;
-          state.darts = cardData.remDarts > 0 ? cardData.remDarts : 3;
-        }
-        render();
-      };
-
-      // Header row
-      const header = document.createElement('div');
-      header.className = 'flex justify-between items-center w-full';
-
-      const title = document.createElement('span');
-      title.className = 'font-bold text-white text-base sm:text-lg';
-      title.innerText = cardData.label;
-      header.appendChild(title);
-
-      // Blue pill ONLY IF preparation (not checkout)
-      if (!cardData.routeRes.isCheckout && cardData.routeRes.prepText && cardData.remScore > 1) {
-        const prepPill = document.createElement('span');
-        prepPill.className = 'prep-pill text-xs px-2.5 py-1';
-        prepPill.innerText = cardData.routeRes.prepText;
-        header.appendChild(prepPill);
-      }
-
-      card.appendChild(header);
-
-      // Body route badges
-      const body = document.createElement('div');
-      body.className = 'flex items-center gap-2 overflow-x-auto py-1';
-
-      if (cardData.remScore <= 1) {
-        const bustText = document.createElement('span');
-        bustText.className = 'text-red-400 font-extrabold text-lg';
-        bustText.innerText = cardData.remScore === 0 ? '¡CIERRE!' : 'SE PASÓ (BUST)';
-        body.appendChild(bustText);
-      } else {
-        cardData.routeRes.route.forEach((bStr, idx) => {
-          if (idx > 0) {
-            const arr = document.createElement('span');
-            arr.className = 'arrow-sep text-lg';
-            arr.innerText = '→';
-            body.appendChild(arr);
-          }
-          const badge = createBadgeElement(bStr, false);
-          body.appendChild(badge);
-        });
-      }
-
-      card.appendChild(body);
-      return card;
-    }
-
-    // --- USER CONTROLS & ACTIONS ---
-    function setDarts(num) {
-      if (state.darts !== num) {
-        pushHistory();
-        state.darts = num;
-        render();
-      }
-    }
-
-    function adjustScore(delta) {
-      pushHistory();
-      let newScore = state.score + delta;
-      if (newScore < 2) newScore = 2;
-      if (newScore > 170) newScore = 170;
-      state.score = newScore;
+    // ACCIÓN AL HACER CLIC EN UNA TARJETA DE FALLO
+    function applyMiss(hitValue) {
+      const next = currentScore - hitValue;
+      if (next < 2 || remainingDarts <= 1) return;
+      pushState();
+      currentScore = next;
+      remainingDarts -= 1;
       render();
     }
 
-    function pushHistory() {
-      historyStack.push(JSON.parse(JSON.stringify(state)));
-      if (historyStack.length > 30) historyStack.shift();
-    }
+    // RENDERIZADO VISUAL REINICIADO Y AUDITADO
+    function render() {
+      // 1. Actualizar Display de Puntaje
+      document.getElementById('scoreDisplay').innerText = currentScore;
 
-    function undo() {
-      if (historyStack.length > 0) {
-        state = historyStack.pop();
-        render();
-        showToast('Deshecho');
-      }
-    }
-
-    // --- KEYPAD MODAL LOGIC ---
-    let keypadVal = '0';
-
-    function openKeypad() {
-      keypadVal = '0';
-      document.getElementById('keypadInputVal').innerText = keypadVal;
-      document.getElementById('keypadModal').classList.add('open');
-    }
-
-    function closeKeypad() {
-      document.getElementById('keypadModal').classList.remove('open');
-    }
-
-    function closeKeypadOnBackdrop(e) {
-      if (e.target.id === 'keypadModal') closeKeypad();
-    }
-
-    function keypadPress(key) {
-      if (key === 'C') {
-        keypadVal = '0';
-      } else if (key === 'DEL') {
-        keypadVal = keypadVal.length > 1 ? keypadVal.slice(0, -1) : '0';
-      } else {
-        if (keypadVal === '0') keypadVal = key;
-        else if (keypadVal.length < 3) keypadVal += key;
-      }
-      document.getElementById('keypadInputVal').innerText = keypadVal;
-    }
-
-    function setKeypadPreset(val) {
-      keypadVal = val.toString();
-      document.getElementById('keypadInputVal').innerText = keypadVal;
-    }
-
-    function confirmKeypad() {
-      let val = parseInt(keypadVal, 10);
-      if (!isNaN(val) && val >= 2 && val <= 170) {
-        pushHistory();
-        state.score = val;
-        render();
-        closeKeypad();
-      } else {
-        showToast('Ingresa un puntaje entre 2 y 170');
-      }
-    }
-
-    // Keyboard support for Keypad
-    document.addEventListener('keydown', (e) => {
-      const modal = document.getElementById('keypadModal');
-      if (modal.classList.contains('open')) {
-        if (e.key >= '0' && e.key <= '9') keypadPress(e.key);
-        else if (e.key === 'Backspace') keypadPress('DEL');
-        else if (e.key === 'Escape') closeKeypad();
-        else if (e.key === 'Enter') confirmKeypad();
-      } else {
-        if (e.code === 'Space') {
-          e.preventDefault();
-          toggleVoice();
+      // 2. Actualizar Selector de Dardos Restantes
+      ['1', '2', '3'].forEach(d => {
+        const btn = document.getElementById(`btnDart${d}`);
+        if (parseInt(d, 10) === remainingDarts) {
+          btn.className = "px-3.5 py-1 rounded-lg text-xs font-extrabold bg-amber-400 text-slate-950 shadow-md transition";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 transition";
         }
+      });
+
+      // 3. Botón Atrás (Habilitar/Deshabilitar)
+      const btnUndo = document.getElementById('btnUndo');
+      if (undoStack.length === 0) {
+        btnUndo.classList.add('opacity-40', 'cursor-not-allowed');
+      } else {
+        btnUndo.classList.remove('opacity-40', 'cursor-not-allowed');
       }
-    });
 
-    // --- HELP MODAL LOGIC ---
-    function openHelp() {
-      document.getElementById('helpModal').classList.add('open');
-    }
-    function closeHelp() {
-      document.getElementById('helpModal').classList.remove('open');
-    }
-    function closeHelpOnBackdrop(e) {
-      if (e.target.id === 'helpModal') closeHelp();
+      // 4. Calcular Ruta Principal
+      const mainResult = calculateRoute(currentScore, remainingDarts);
+      const container = document.getElementById('mainRouteContainer');
+      container.innerHTML = '';
+
+      mainResult.route.forEach((dart, idx) => {
+        const badge = document.createElement('div');
+        const dType = dart[0];
+        let typeClass = 'dart-S';
+        if (dart === 'DBull' || dart === '50') typeClass = 'dart-DBULL';
+        else if (dart === 'Bull' || dart === '25') typeClass = 'dart-BULL';
+        else if (dType === 'T') typeClass = 'dart-T';
+        else if (dType === 'D') typeClass = 'dart-D';
+
+        badge.className = `dart-badge badge-giant ${typeClass}`;
+        badge.innerText = dart;
+        container.appendChild(badge);
+
+        if (idx < mainResult.route.length - 1) {
+          const arrow = document.createElement('span');
+          arrow.className = 'text-slate-600 font-bold text-xl md:text-3xl px-1';
+          arrow.innerText = '→';
+          container.appendChild(arrow);
+        }
+      });
+
+      // Etiqueta Azul de Preparación en Ruta Principal (Solo si NO es cierre)
+      if (!mainResult.isCheckout && mainResult.leaveText) {
+        const tag = document.createElement('div');
+        tag.className = 'ml-2 bg-sky-600 text-white font-extrabold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-lg self-center whitespace-nowrap';
+        tag.innerText = mainResult.leaveText;
+        container.appendChild(tag);
+      }
+
+      // 5. Renderizar Tarjetas de Fallo (Ocultas en 1 Dardo)
+      const failuresSection = document.getElementById('failuresSection');
+      const failuresGrid = document.getElementById('failuresGrid');
+      failuresGrid.innerHTML = '';
+
+      if (remainingDarts === 1) {
+        failuresSection.classList.add('hidden');
+      } else {
+        failuresSection.classList.remove('hidden');
+        const firstDart = mainResult.route[0];
+        const missCards = generateMissCards(currentScore, remainingDarts, firstDart);
+
+        missCards.forEach(card => {
+          const cardEl = document.createElement('div');
+          cardEl.className = 'failure-card-item bg-[#121722] hover:bg-slate-800/90 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-3.5 md:p-4 cursor-pointer transition transform active:scale-98 shadow-lg flex flex-col justify-between';
+          cardEl.onclick = () => applyMiss(card.hitValue);
+
+          // Encabezado con únicamente "Si cae SX"
+          const labelEl = document.createElement('div');
+          labelEl.className = 'text-xs md:text-sm font-bold text-slate-400 mb-2';
+          labelEl.innerText = card.label;
+
+          // Ruta en Grande
+          const routeContainer = document.createElement('div');
+          routeContainer.className = 'flex items-center gap-2 flex-wrap';
+
+          if (card.routeObj.route[0] === 'BUST') {
+            const bustTag = document.createElement('span');
+            bustTag.className = 'text-rose-500 font-extrabold text-lg';
+            bustTag.innerText = 'BUST / PASADO';
+            routeContainer.appendChild(bustTag);
+          } else {
+            card.routeObj.route.forEach((rDart, rIdx) => {
+              const rType = rDart[0];
+              let rClass = 'dart-S';
+              if (rDart === 'DBull' || rDart === '50') rClass = 'dart-DBULL';
+              else if (rDart === 'Bull' || rDart === '25') rClass = 'dart-BULL';
+              else if (rType === 'T') rClass = 'dart-T';
+              else if (rType === 'D') rClass = 'dart-D';
+
+              const rBadge = document.createElement('span');
+              rBadge.className = `dart-badge text-base md:text-xl px-3 py-1.5 ${rClass}`;
+              rBadge.innerText = rDart;
+              routeContainer.appendChild(rBadge);
+
+              if (rIdx < card.routeObj.route.length - 1) {
+                const rArrow = document.createElement('span');
+                rArrow.className = 'text-slate-600 font-bold text-xs md:text-sm';
+                rArrow.innerText = '→';
+                routeContainer.appendChild(rArrow);
+              }
+            });
+
+            // Etiqueta Azul ÚNICAMENTE si NO es Cierre
+            if (!card.routeObj.isCheckout && card.routeObj.leaveText) {
+              const rLeaveTag = document.createElement('span');
+              rLeaveTag.className = 'bg-sky-600 text-white font-extrabold text-xs px-2.5 py-1 rounded-full ml-1';
+              rLeaveTag.innerText = card.routeObj.leaveText;
+              routeContainer.appendChild(rLeaveTag);
+            }
+          }
+
+          cardEl.appendChild(labelEl);
+          cardEl.appendChild(routeContainer);
+          failuresGrid.appendChild(cardEl);
+        });
+      }
     }
 
-    // --- VOICE RECOGNITION (WEB SPEECH API) ---
+    // TECLADO NUMÉRICO MODAL
+    function openNumpad() {
+      numpadInput = "0";
+      document.getElementById('numpadValue').innerText = numpadInput;
+      document.getElementById('numpadModal').classList.remove('hidden');
+    }
+
+    function closeNumpad() {
+      document.getElementById('numpadModal').classList.add('hidden');
+    }
+
+    function appendNum(num) {
+      if (numpadInput === "0") {
+        numpadInput = num;
+      } else if (numpadInput.length < 3) {
+        numpadInput += num;
+      }
+      document.getElementById('numpadValue').innerText = numpadInput;
+    }
+
+    function clearNumpad() {
+      numpadInput = "0";
+      document.getElementById('numpadValue').innerText = numpadInput;
+    }
+
+    function backspaceNumpad() {
+      if (numpadInput.length > 1) {
+        numpadInput = numpadInput.slice(0, -1);
+      } else {
+        numpadInput = "0";
+      }
+      document.getElementById('numpadValue').innerText = numpadInput;
+    }
+
+    function setQuickScore(val) {
+      numpadInput = val.toString();
+      confirmNumpad();
+    }
+
+    function confirmNumpad() {
+      const val = parseInt(numpadInput, 10);
+      if (!isNaN(val) && val >= 2 && val <= 170) {
+        setScoreDirect(val);
+        closeNumpad();
+      } else {
+        // Notificación discreta de valor no válido
+        showVoiceBanner(`Puntaje no válido: ${numpadInput} (Debe ser de 2 a 170)`);
+      }
+    }
+
+    function toggleHelpModal() {
+      const modal = document.getElementById('helpModal');
+      modal.classList.toggle('hidden');
+    }
+
+    // CONFIGURACIÓN DE TECLADO FÍSICO
+    function setupKeyboardListeners() {
+      document.addEventListener('keydown', (e) => {
+        const numpadVisible = !document.getElementById('numpadModal').classList.contains('hidden');
+
+        if (numpadVisible) {
+          if (e.key >= '0' && e.key <= '9') {
+            appendNum(e.key);
+          } else if (e.key === 'Backspace') {
+            backspaceNumpad();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            confirmNumpad();
+          } else if (e.key === 'Escape') {
+            closeNumpad();
+          }
+        } else {
+          if (e.key === 'Backspace') {
+            undoState();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            openNumpad();
+          }
+        }
+      });
+    }
+
+    // CONTROL POR VOZ HÍBRIDO (Web Speech API es-CO)
     let recognition = null;
     let isListening = false;
-    let continuousMode = false;
 
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    function initSpeech() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.lang = 'es-CO';
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      if (!SpeechRecognition) return null;
 
-      recognition.onstart = () => {
+      const rec = new SpeechRecognition();
+      rec.lang = 'es-CO';
+      rec.continuous = false;
+      rec.interimResults = false;
+
+      rec.onstart = function() {
         isListening = true;
-        updateVoiceUI(true);
+        updateVoiceUI();
+        showVoiceBanner("Escuchando comando de voz...");
       };
 
-      recognition.onend = () => {
+      rec.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.toLowerCase().trim();
+        showVoiceBanner(`Escuché: "${transcript}"`);
+        processVoiceCommand(transcript);
+      };
+
+      rec.onerror = function(event) {
+        showVoiceBanner(`Error de voz: ${event.error}`);
         isListening = false;
-        updateVoiceUI(false);
-        if (continuousMode) {
-          try { recognition.start(); } catch(err) {}
+        updateVoiceUI();
+      };
+
+      rec.onend = function() {
+        isListening = false;
+        updateVoiceUI();
+        const continuous = document.getElementById('continuousToggle').checked;
+        if (continuous) {
+          setTimeout(() => {
+            try { rec.start(); } catch(e) {}
+          }, 400);
         }
       };
 
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase().trim();
-        showToast(`Escuchado: "${transcript}"`);
-        parseVoiceCommand(transcript);
-      };
-
-      recognition.onerror = () => {
-        isListening = false;
-        updateVoiceUI(false);
-      };
+      return rec;
     }
 
     function toggleVoice() {
+      if (!recognition) recognition = initSpeech();
       if (!recognition) {
-        showToast('Reconocimiento de voz no soportado en este navegador');
+        alert("Tu navegador no soporta reconocimiento de voz Web Speech API.");
         return;
       }
+
       if (isListening) {
-        continuousMode = false;
-        document.getElementById('continuousToggle').checked = false;
         recognition.stop();
+        document.getElementById('continuousToggle').checked = false;
       } else {
-        try { recognition.start(); } catch(err) {}
+        try {
+          recognition.start();
+        } catch(e) {
+          recognition.stop();
+        }
       }
     }
 
-    function onContinuousToggleChange() {
-      const chk = document.getElementById('continuousToggle').checked;
-      continuousMode = chk;
-      if (continuousMode && !isListening) {
-        toggleVoice();
+    function handleContinuousChange() {
+      const checked = document.getElementById('continuousToggle').checked;
+      if (checked && !isListening) {
+        if (!recognition) recognition = initSpeech();
+        try { recognition.start(); } catch(e) {}
       }
     }
 
-    function updateVoiceUI(active) {
+    function updateVoiceUI() {
       const btn = document.getElementById('btnVoice');
       const text = document.getElementById('voiceBtnText');
-      const mic = document.getElementById('micIcon');
-
-      if (active) {
-        btn.classList.remove('bg-[#161F30]', 'border-[#2A364F]');
-        btn.classList.add('bg-red-600', 'border-red-500', 'animate-pulse');
-        text.innerText = 'Escuchando...';
-        mic.classList.replace('text-slate-300', 'text-white');
+      if (isListening) {
+        btn.classList.add('mic-active');
+        text.innerText = "Escuchando";
       } else {
-        btn.classList.remove('bg-red-600', 'border-red-500', 'animate-pulse');
-        btn.classList.add('bg-[#161F30]', 'border-[#2A364F]');
-        text.innerText = 'Voz';
-        mic.classList.replace('text-white', 'text-slate-300');
+        btn.classList.remove('mic-active');
+        text.innerText = "Voz";
       }
     }
 
-    function parseVoiceCommand(text) {
-      // 1. Puntaje directo ("cierre 123", "tengo 85", "puntaje 100")
-      const scoreMatch = text.match(/(?:cierre|tengo|puntaje|queda|quedan)\s+(\d+)/);
-      if (scoreMatch) {
-        let val = parseInt(scoreMatch[1], 10);
-        if (val >= 2 && val <= 170) {
-          pushHistory();
-          state.score = val;
-          render();
-          return;
-        }
-      }
+    function showVoiceBanner(msg) {
+      const banner = document.getElementById('voiceBanner');
+      const text = document.getElementById('voiceBannerText');
+      text.innerText = msg;
+      banner.classList.remove('hidden');
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3500);
+    }
 
-      // Numbers alone ("121", "85")
-      if (/^\d+$/.test(text)) {
-        let val = parseInt(text, 10);
-        if (val >= 2 && val <= 170) {
-          pushHistory();
-          state.score = val;
-          render();
-          return;
-        }
-      }
-
-      // Undo commands
-      if (text.includes('atrás') || text.includes('deshacer') || text.includes('borrar')) {
-        undo();
+    // INTÉRPRETE DE COMANDOS DE VOZ CON REGEX Y PALABRAS CLAVE
+    function processVoiceCommand(cmd) {
+      // 1. Comando Deshacer / Atrás
+      if (cmd.includes('atrás') || cmd.includes('atras') || cmd.includes('deshacer') || cmd.includes('borrar')) {
+        undoState();
         return;
       }
 
-      // Dart hit commands ("cayó 20", "sencillo 20", "triple 19", "doble 16", "bull", "afuera")
-      let impact = null;
+      // 2. Extraer Números para fijar puntaje o restar
+      const numMatch = cmd.match(/\b(\d{1,3})\b/);
 
-      if (text.includes('afuera') || text.includes('cero') || text.includes('falló')) {
-        impact = 0;
-      } else if (text.includes('doble bull') || text.includes('bullseye')) {
-        impact = 50;
-      } else if (text.includes('bull') || text.includes('diana')) {
-        impact = 25;
-      } else {
-        const tripleMatch = text.match(/(?:triple|t)\s*(\d+)/);
-        const doubleMatch = text.match(/(?:doble|d)\s*(\d+)/);
-        const singleMatch = text.match(/(?:sencillo|single|cayó|marcó|s)\s*(\d+)/);
-
-        if (tripleMatch) impact = 3 * parseInt(tripleMatch[1], 10);
-        else if (doubleMatch) impact = 2 * parseInt(doubleMatch[1], 10);
-        else if (singleMatch) impact = parseInt(singleMatch[1], 10);
-      }
-
-      if (impact !== null) {
-        pushHistory();
-        let remScore = state.score - impact;
-        if (remScore <= 1) {
-          state.score = remScore === 0 ? 0 : state.score;
-          state.darts = 3;
-        } else {
-          state.score = remScore;
-          state.darts = state.darts > 1 ? state.darts - 1 : 3;
+      // Si el comando especifica acción de caída
+      if (cmd.includes('cayó') || cmd.includes('cayo') || cmd.includes('sencillo') || cmd.includes('triple') || cmd.includes('doble') || cmd.includes('bull')) {
+        let val = 0;
+        if (cmd.includes('doble bull') || cmd.includes('centro') || cmd.includes('bullseye')) {
+          val = 50;
+        } else if (cmd.includes('bull')) {
+          val = 25;
+        } else if (numMatch) {
+          const n = parseInt(numMatch[1], 10);
+          if (cmd.includes('triple')) val = n * 3;
+          else if (cmd.includes('doble')) val = n * 2;
+          else val = n;
         }
-        render();
+
+        if (val > 0) {
+          applyMiss(val);
+          return;
+        }
+      }
+
+      // 3. Fijar puntaje directo por número (ej: "123", "cierre 85", "me toca 105")
+      if (numMatch) {
+        const scoreVal = parseInt(numMatch[1], 10);
+        if (scoreVal >= 2 && scoreVal <= 170) {
+          setScoreDirect(scoreVal);
+        }
       }
     }
-
-    // Helper: Toast notification
-    let toastTimer = null;
-    function showToast(msg) {
-      const toast = document.getElementById('voiceToast');
-      toast.innerText = msg;
-      toast.classList.add('show');
-      if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
-    }
-
-    // --- INITIALIZATION ---
-    window.onload = () => {
-      render();
-    };
   </script>
 </body>
 </html>
