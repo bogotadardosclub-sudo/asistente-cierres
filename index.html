@@ -1,930 +1,1344 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Asistente de Cierres · Bogotá Dardos Club</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brandDark: '#05070A',
-            cardBg: '#111622',
-            cardBorder: '#1E293B',
-            tripleRed: '#EF4444',
-            doubleYellow: '#FACC15',
-            setupBlue: '#0284C7'
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-    
-    * {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Reset & CSS Custom Properties */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-dark: #05070a;
+      --card-bg: #111622;
+      --card-border: #1e293b;
+      --yellow-primary: #facc15;
+      --yellow-hover: #eab308;
+      --triple-red: #ef4444;
+      --single-white: #ffffff;
+      --dark-text: #0f172a;
+      --prep-blue: #0284c7;
+      --prep-blue-text: #ffffff;
+      --gray-text: #94a3b8;
+      --white-text: #f8fafc;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-      background-color: #05070A;
-      color: #F8FAFC;
+      background-color: var(--bg-dark);
+      color: var(--white-text);
+      font-family: var(--font-family);
       min-height: 100vh;
-      margin: 0;
+      display: flex;
+      flex-direction: column;
       overflow-x: hidden;
     }
 
-    /* Badge Sizing & Protection */
-    .dart-badge {
-      flex-shrink: 0 !important;
-      white-space: nowrap !important;
-      width: fit-content !important;
-      box-sizing: border-box !important;
+    /* Top Header Bar */
+    header {
+      background-color: #0b0f19;
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      z-index: 10;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-svg {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .brand-titles {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--white-text);
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--yellow-primary);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      border-radius: 0.75rem;
-      padding: 0.4rem 0.85rem;
-      font-size: clamp(1.1rem, 4vw, 2.2rem);
-      line-height: 1.1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      transition: transform 0.1s ease;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      outline: none;
     }
 
-    .dart-badge-hero {
-      font-size: clamp(1.6rem, 6vw, 3.2rem);
-      padding: 0.6rem 1.4rem;
-      border-radius: 1rem;
+    .btn-icon {
+      padding: 8px 12px;
     }
 
-    /* Pulsing Voice Indicator */
-    @keyframes pulse-red {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+    .btn-voice {
+      background-color: #1e293b;
+      color: var(--white-text);
+      border-color: #334155;
+    }
+    .btn-voice.listening {
+      background-color: #991b1b;
+      border-color: #ef4444;
+      color: #ffffff;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
-    .listening-pulse {
-      animation: pulse-red 1.5s infinite;
-      background-color: #EF4444 !important;
-      color: #FFFFFF !important;
-      border-color: #F87171 !important;
+
+    /* Continuous Switch Container (Generous Spacing) */
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #1e293b;
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      cursor: pointer;
     }
 
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #05070A;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1E293B;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #334155;
+    .switch-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-text);
     }
 
-    /* Target Landscape Split Layout */
-    @media (max-height: 520px) and (orientation: landscape) {
-      .app-container {
-        display: grid;
-        grid-template-columns: 44% 56%;
-        gap: 0.75rem;
-        height: calc(100vh - 64px);
-        padding: 0.5rem;
-        overflow: hidden;
+    .toggle-switch {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      background-color: #475569;
+      border-radius: 11px;
+      transition: background-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .switch-container.active .toggle-switch {
+      background-color: var(--yellow-primary);
+    }
+
+    .switch-container.active .toggle-switch::after {
+      transform: translateX(16px);
+    }
+
+    .switch-container.active .switch-label {
+      color: var(--white-text);
+    }
+
+    .btn-yellow {
+      background-color: var(--yellow-primary);
+      color: var(--dark-text);
+    }
+    .btn-yellow:hover {
+      background-color: var(--yellow-hover);
+    }
+
+    .btn-help {
+      background-color: #1e293b;
+      color: var(--gray-text);
+      border-color: #334155;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    /* Main Content Layout */
+    main {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .segmented-control {
+      display: flex;
+      background-color: #0b0f19;
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .segment-btn {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: var(--gray-text);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .segment-btn.active {
+      background-color: var(--yellow-primary);
+      color: var(--dark-text);
+    }
+
+    .btn-back {
+      background-color: #1e293b;
+      color: var(--white-text);
+      border: 1px solid #334155;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .btn-back:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Score Display Center */
+    .score-display-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin: 10px 0;
+    }
+
+    .btn-step {
+      background-color: #1e293b;
+      color: var(--white-text);
+      border: 1px solid #334155;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-step:hover {
+      background-color: #334155;
+    }
+
+    .score-number {
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--yellow-primary);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      cursor: pointer;
+      text-shadow: 0 4px 20px rgba(250, 204, 21, 0.25);
+      transition: transform 0.1s ease;
+    }
+    .score-number:active {
+      transform: scale(0.96);
+    }
+
+    /* Route Display Area */
+    .route-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .route-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      overflow-x: auto;
+      padding: 6px 0;
+    }
+
+    .arrow-icon {
+      color: var(--gray-text);
+      font-size: 1.4rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Strict Badge CSS Standards */
+    .dart-badge {
+      flex-shrink: 0;
+      white-space: nowrap;
+      width: fit-content;
+      box-sizing: border-box;
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge-triple {
+      background-color: var(--triple-red);
+      color: #ffffff;
+    }
+
+    .badge-single {
+      background-color: var(--single-white);
+      color: var(--dark-text);
+    }
+
+    .badge-double {
+      background-color: var(--yellow-primary);
+      color: var(--dark-text);
+    }
+
+    .badge-prep-pill {
+      background-color: var(--prep-blue);
+      color: var(--prep-blue-text);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Miss Reactions Section */
+    .miss-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .miss-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--gray-text);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Miss Cards Grid Desktop: 3 top, 2 bottom centered */
+    .miss-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    .miss-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .miss-card:hover {
+      border-color: #334155;
+      transform: translateY(-2px);
+    }
+
+    /* Grid positions for desktop (top 3, bottom 2 centered) */
+    .miss-card:nth-child(1) { grid-column: span 2; }
+    .miss-card:nth-child(2) { grid-column: span 2; }
+    .miss-card:nth-child(3) { grid-column: span 2; }
+    .miss-card:nth-child(4) { grid-column: 2 / span 2; }
+    .miss-card:nth-child(5) { grid-column: 4 / span 2; }
+
+    .miss-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .miss-condition {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white-text);
+    }
+
+    .miss-route {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .miss-route .dart-badge {
+      padding: 8px 16px;
+      font-size: 1.3rem;
+      border-radius: 10px;
+    }
+
+    .miss-route .arrow-icon {
+      font-size: 1rem;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--gray-text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .keypad-display {
+      background-color: #0b0f19;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--yellow-primary);
+      text-align: right;
+    }
+
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .btn-key {
+      background-color: #1e293b;
+      color: var(--white-text);
+      border: 1px solid #334155;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-key:hover {
+      background-color: #334155;
+    }
+    .btn-key-action {
+      background-color: #334155;
+      color: var(--yellow-primary);
+    }
+
+    .presets-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .btn-preset {
+      background-color: #0b0f19;
+      color: var(--gray-text);
+      border: 1px solid var(--card-border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-preset:hover {
+      color: var(--white-text);
+      border-color: #334155;
+    }
+
+    /* Help Modal Content */
+    .help-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--gray-text);
+    }
+
+    .help-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .help-cmd {
+      color: var(--yellow-primary);
+      font-weight: 700;
+    }
+
+    /* Toast Voice Notification */
+    .toast-voice {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: #1e293b;
+      border: 1px solid var(--yellow-primary);
+      color: var(--white-text);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 200;
+    }
+    .toast-voice.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 820px) {
+      .miss-grid {
+        grid-template-columns: 1fr;
       }
-      .hero-pane {
+      .miss-card:nth-child(n) {
+        grid-column: span 1;
+      }
+      .score-number {
+        font-size: 4rem;
+      }
+      .dart-badge {
+        font-size: 1.6rem;
+        padding: 10px 18px;
+      }
+    }
+
+    /* Mobile Landscape Split Screen */
+    @media (max-height: 500px) and (orientation: landscape) {
+      header {
+        padding: 8px 16px;
+      }
+      main {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 12px;
+      }
+      .hero-card {
+        width: 44%;
+        padding: 16px;
+        gap: 12px;
+      }
+      .miss-section {
+        width: 56%;
+        max-height: calc(100vh - 80px);
         overflow-y: auto;
       }
-      .cards-pane {
-        overflow-y: auto;
-        max-height: 100%;
+      .score-number {
+        font-size: 3rem;
+      }
+      .dart-badge {
+        font-size: 1.3rem;
+        padding: 6px 12px;
       }
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body>
 
-  <!-- TOP HEADER BAR -->
-  <header class="w-full bg-[#0D111A] border-b border-cardBorder px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-md">
-    <div class="flex items-center space-x-3">
-      <!-- Shield Logo Image with SVG Fallback -->
-      <img src="logo.png" alt="Bogotá Dardos Club" style="height: 44px; width: auto; mix-blend-mode: lighten;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-      <svg class="w-9 h-9 text-red-600 hidden" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-3zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
+  <!-- Top Header Bar -->
+  <header>
+    <div class="brand-container">
+      <!-- Bogotá Dardos Club Emblem SVG -->
+      <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#0B0F19" stroke="#FACC15" stroke-width="4"/>
+        <circle cx="50" cy="50" r="34" stroke="#EF4444" stroke-width="3" stroke-dasharray="6 4"/>
+        <circle cx="50" cy="50" r="20" stroke="#0284C7" stroke-width="2"/>
+        <polygon points="50,12 56,40 50,34 44,40" fill="#FACC15"/>
+        <polygon points="50,88 56,60 50,66 44,60" fill="#FACC15"/>
+        <polygon points="12,50 40,56 34,50 40,44" fill="#FACC15"/>
+        <polygon points="88,50 60,56 66,50 60,44" fill="#FACC15"/>
+        <circle cx="50" cy="50" r="6" fill="#EF4444"/>
       </svg>
-      <div>
-        <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-none">Asistente de Cierres</h1>
-        <span class="text-xs font-semibold text-yellow-400 tracking-wider uppercase">Bogotá Dardos Club</span>
+      <div class="brand-titles">
+        <span class="brand-title">Asistente de Cierres</span>
+        <span class="brand-subtitle">Bogotá Dardos Club</span>
       </div>
     </div>
 
-    <div class="flex items-center space-x-2 sm:space-x-3">
-      <!-- Mic Button -->
-      <button id="btnVoice" onclick="toggleVoice()" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-sm font-bold transition active:scale-95" title="Activar entrada por voz">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-        </svg>
+    <div class="header-controls">
+      <!-- Voice Button -->
+      <button id="btnVoice" class="btn btn-voice">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
         <span>Voz</span>
       </button>
 
-      <!-- Continuous Voice Toggle Switch -->
-      <div class="hidden sm:flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300">
-        <span>Continuo</span>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" id="chkContinuous" onchange="toggleContinuousVoice(this.checked)" class="sr-only peer">
-          <div class="w-8 h-4.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-500"></div>
-        </label>
+      <!-- Continuous Switch -->
+      <div id="switchContinuous" class="switch-container">
+        <span class="switch-label">Continuo</span>
+        <div class="toggle-switch"></div>
       </div>
 
-      <!-- Single '+' Puntaje Button -->
-      <button onclick="openKeypad()" class="flex items-center space-x-1 bg-yellow-500 hover:bg-yellow-400 text-slate-950 px-3.5 py-2 rounded-xl text-sm font-black transition active:scale-95 shadow-lg shadow-yellow-500/20">
-        <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-        </svg>
-        <span>Puntaje</span>
+      <!-- Set Score Button -->
+      <button id="btnOpenKeypad" class="btn btn-yellow">
+        <span>+ Puntaje</span>
       </button>
 
-      <!-- Help Modal Button -->
-      <button onclick="openHelp()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 w-9 h-9 rounded-xl flex items-center justify-center font-bold text-base transition active:scale-95">
-        ?
-      </button>
+      <!-- Help Button -->
+      <button id="btnHelp" class="btn btn-help">?</button>
     </div>
   </header>
 
-  <!-- DISCREET VOICE STATUS HINT BANNER -->
-  <div id="voiceHintBanner" class="hidden bg-emerald-950/80 border-b border-emerald-800/60 px-4 py-1.5 text-center text-xs font-medium text-emerald-300 flex items-center justify-center space-x-2">
-    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-    <span>Escuchando... Di: <strong>"Cierre 105"</strong> · <strong>"Cayó 20"</strong> · <strong>"Triple 5"</strong> · <strong>"Atrás"</strong></span>
-  </div>
-
-  <!-- FLOATING RECOGNITION TOAST -->
-  <div id="voiceToast" class="fixed bottom-4 right-4 z-50 bg-slate-900/95 border border-slate-700 text-slate-100 px-4 py-2.5 rounded-2xl shadow-2xl text-sm font-semibold transform translate-y-10 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-2">
-    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-    </svg>
-    <span id="voiceToastText">Escuché: ...</span>
-  </div>
-
-  <!-- MAIN APPLICATION CONTENT -->
-  <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 app-container flex flex-col space-y-4 sm:space-y-6">
-
-    <!-- HERO CARD -->
-    <section class="hero-pane bg-cardBg border border-cardBorder rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-      <!-- Top Pill Controls: Darts Left + Undo -->
-      <div class="flex items-center justify-between mb-4">
-        <!-- Darts Left Selector -->
-        <div class="flex items-center bg-slate-900/90 border border-slate-800 rounded-2xl p-1 space-x-1">
-          <button id="btnDarts3" onclick="setDartsLeft(3)" class="px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition">3 dardos</button>
-          <button id="btnDarts2" onclick="setDartsLeft(2)" class="px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition">2 dardos</button>
-          <button id="btnDarts1" onclick="setDartsLeft(1)" class="px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition">1 dardo</button>
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Card -->
+    <section class="hero-card">
+      <div class="hero-header">
+        <!-- Segmented Control -->
+        <div class="segmented-control">
+          <button class="segment-btn active" data-darts="3">3 dardos</button>
+          <button class="segment-btn" data-darts="2">2 dardos</button>
+          <button class="segment-btn" data-darts="1">1 dardo</button>
         </div>
 
-        <!-- Undo Button -->
-        <button id="btnUndo" onclick="undoLastAction()" class="hidden items-center space-x-1 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-          </svg>
+        <!-- Back Button -->
+        <button id="btnUndo" class="btn-back" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
           <span>Atrás</span>
         </button>
       </div>
 
-      <!-- Main Score Display with Minus/Plus Controls -->
-      <div class="flex items-center justify-center space-x-3 sm:space-x-8 my-2">
-        <button onclick="changeScore(-1)" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-2xl sm:text-3xl border border-slate-700 flex items-center justify-center transition active:scale-90 shadow-lg">
-          -
-        </button>
-
-        <div onclick="openKeypad()" class="cursor-pointer text-center group px-2">
-          <div id="scoreDisplay" class="text-6xl sm:text-8xl font-black text-yellow-400 tracking-tight transition-transform group-hover:scale-105 drop-shadow-[0_4px_25px_rgba(250,204,21,0.25)]">
-            105
-          </div>
-          <span class="text-xs text-slate-500 font-semibold uppercase tracking-widest group-hover:text-yellow-400/80 transition">Toca para cambiar</span>
-        </div>
-
-        <button onclick="changeScore(1)" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-2xl sm:text-3xl border border-slate-700 flex items-center justify-center transition active:scale-90 shadow-lg">
-          +
-        </button>
+      <!-- Giant Interactive Score -->
+      <div class="score-display-container">
+        <button id="btnMinus" class="btn-step">-</button>
+        <span id="scoreDisplay" class="score-number">105</span>
+        <button id="btnPlus" class="btn-step">+</button>
       </div>
 
-      <!-- Massive Optimal Route Display -->
-      <div class="mt-5 border-t border-slate-800/80 pt-4">
-        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 text-center sm:text-left">
-          Ruta de Cierre Recomendada
-        </div>
-        <div id="heroRouteContainer" class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 min-h-[64px]">
-          <!-- Badges injected dynamically -->
-        </div>
+      <!-- Main Route Badges -->
+      <div class="route-wrapper">
+        <div id="prepPillHero" class="badge-prep-pill" style="display: none;"></div>
+        <div id="mainRouteBadges" class="route-container"></div>
       </div>
     </section>
 
-    <!-- MISS CONTINGENCY SECTION -->
-    <section class="cards-pane space-y-3">
-      <div class="flex items-center justify-between px-1">
-        <h2 id="contingencyTitle" class="text-xs font-black tracking-widest text-slate-400 uppercase">
-          REACCIÓN ANTE FALLO EN DARDO 1
-        </h2>
-        <span class="text-xs text-slate-500 font-medium hidden sm:inline">Selecciona la casilla según donde cayó el dardo</span>
-      </div>
-
-      <!-- Contingency Grid -->
-      <div id="missCardsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <!-- Cards injected dynamically -->
-      </div>
+    <!-- Miss Reaction Section -->
+    <section id="missSection" class="miss-section">
+      <div id="missTitle" class="miss-title">REACCIÓN ANTE FALLO EN DARDO 1</div>
+      <div id="missGrid" class="miss-grid"></div>
     </section>
   </main>
 
-  <!-- KEYPAD MODAL -->
-  <div id="keypadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="bg-cardBg border border-cardBorder rounded-3xl max-w-sm w-full p-5 shadow-2xl flex flex-col space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-black text-white">Ingresar Puntaje</h3>
-        <button onclick="closeKeypad()" class="text-slate-400 hover:text-white font-bold text-xl px-2">✕</button>
+  <!-- Keypad Modal -->
+  <div id="modalKeypad" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Ingresar Puntaje</span>
+        <button id="btnCloseKeypad" class="btn-close">&times;</button>
+      </div>
+      <div id="keypadValue" class="keypad-display">0</div>
+      
+      <div class="presets-row">
+        <button class="btn-preset" data-val="170">170</button>
+        <button class="btn-preset" data-val="121">121</button>
+        <button class="btn-preset" data-val="105">105</button>
+        <button class="btn-preset" data-val="85">85</button>
+        <button class="btn-preset" data-val="70">70</button>
+        <button class="btn-preset" data-val="40">40</button>
       </div>
 
-      <!-- Quick Presets -->
-      <div class="grid grid-cols-4 gap-1.5">
-        <button onclick="setKeypadValue(170)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">170</button>
-        <button onclick="setKeypadValue(121)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">121</button>
-        <button onclick="setKeypadValue(105)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">105</button>
-        <button onclick="setKeypadValue(92)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">92</button>
-        <button onclick="setKeypadValue(85)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">85</button>
-        <button onclick="setKeypadValue(70)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">70</button>
-        <button onclick="setKeypadValue(65)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">65</button>
-        <button onclick="setKeypadValue(40)" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 text-xs font-black py-2 rounded-xl border border-slate-700">40</button>
-      </div>
-
-      <!-- Digital Screen -->
-      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-right">
-        <span id="keypadDisplay" class="text-4xl font-black text-yellow-400 tracking-wider">0</span>
-      </div>
-
-      <!-- Numeric Grid -->
-      <div class="grid grid-cols-3 gap-2">
-        <button onclick="pressKey('7')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">7</button>
-        <button onclick="pressKey('8')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">8</button>
-        <button onclick="pressKey('9')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">9</button>
-        
-        <button onclick="pressKey('4')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">4</button>
-        <button onclick="pressKey('5')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">5</button>
-        <button onclick="pressKey('6')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">6</button>
-        
-        <button onclick="pressKey('1')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">1</button>
-        <button onclick="pressKey('2')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">2</button>
-        <button onclick="pressKey('3')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">3</button>
-        
-        <button onclick="pressKey('C')" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 font-bold text-lg py-3 rounded-2xl border border-rose-800/60">C</button>
-        <button onclick="pressKey('0')" class="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-2xl py-3 rounded-2xl border border-slate-700">0</button>
-        <button onclick="pressKey('BS')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-lg py-3 rounded-2xl border border-slate-700 flex items-center justify-center">⌫</button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 pt-2">
-        <button onclick="closeKeypad()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-2xl border border-slate-700">Cancelar</button>
-        <button onclick="confirmKeypad()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-black py-3 rounded-2xl shadow-lg shadow-yellow-500/20">Confirmar</button>
+      <div class="keypad-grid">
+        <button class="btn-key" data-key="1">1</button>
+        <button class="btn-key" data-key="2">2</button>
+        <button class="btn-key" data-key="3">3</button>
+        <button class="btn-key" data-key="4">4</button>
+        <button class="btn-key" data-key="5">5</button>
+        <button class="btn-key" data-key="6">6</button>
+        <button class="btn-key" data-key="7">7</button>
+        <button class="btn-key" data-key="8">8</button>
+        <button class="btn-key" data-key="9">9</button>
+        <button class="btn-key btn-key-action" data-key="C">C</button>
+        <button class="btn-key" data-key="0">0</button>
+        <button class="btn-key btn-key-action" data-key="OK">OK</button>
       </div>
     </div>
   </div>
 
-  <!-- HELP MODAL -->
-  <div id="helpModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="bg-cardBg border border-cardBorder rounded-3xl max-w-lg w-full p-6 shadow-2xl flex flex-col space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-xl font-black text-white">Guía y Reglas del Asistente</h3>
-        <button onclick="closeHelp()" class="text-slate-400 hover:text-white font-bold text-xl px-2">✕</button>
+  <!-- Help Modal -->
+  <div id="modalHelp" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Instrucciones & Comandos</span>
+        <button id="btnCloseHelp" class="btn-close">&times;</button>
       </div>
-
-      <div class="space-y-4 text-sm text-slate-300 leading-relaxed">
-        <div>
-          <h4 class="font-bold text-yellow-400 text-base mb-1">Protección de Vecinos Laterales (101 - 110)</h4>
-          <p>En este rango critical de 3 dardos, la app no solo busca cerrar rápido sino **evitar visitas muertas**. Por ejemplo, para 105, se abre con <strong>T20</strong> porque sus 3 sencillos (S20=85, S5=100, S1=104) mantienen el cierre vivo en 2 dardos. Abrir con T19 deja 102 en S3, número sin cierre posible en 2 dardos.</p>
+      <div class="help-list">
+        <div class="help-item">
+          <span class="help-cmd">Comandos de Voz (Español):</span>
+          <span>• "cierre 105" / "tengo 85" / "170"</span>
+          <span>• "cayó 20" / "sencillo 5" / "triple 20" / "doble 16"</span>
+          <span>• "bull" / "afuera" / "atrás"</span>
         </div>
-
-        <div>
-          <h4 class="font-bold text-yellow-400 text-base mb-1">Regla de Paracaídas a Bull (61 - 70)</h4>
-          <p>Con 2 dardos restantes, la ruta ajusta el primer tiro para que si fallas al sencillo de al lado, quedes directamente en <strong>Bullseye (50)</strong> para intentar el cierre de emergencia.</p>
+        <div class="help-item">
+          <span class="help-cmd">Teclado:</span>
+          <span>Presiona Barra Espaciadora para activar voz en PC.</span>
         </div>
-
-        <div>
-          <h4 class="font-bold text-yellow-400 text-base mb-1">Código de Colores</h4>
-          <ul class="list-disc list-inside space-y-1 pl-1">
-            <li><span class="text-red-400 font-bold">Rojo:</span> Triples (T20, T19...)</li>
-            <li><span class="text-yellow-400 font-bold">Amarillo:</span> Dobles y Bull (D20, D16, DB)</li>
-            <li><span class="text-white font-bold">Blanco:</span> Sencillos (S20, S19...)</li>
-            <li><span class="text-sky-400 font-bold">Azul:</span> Indicador de preparación (Deja D20)</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="font-bold text-yellow-400 text-base mb-1">Comandos de Voz</h4>
-          <p>Presiona el botón <strong>Voz</strong> o usa la <strong>Barra Espaciadora</strong> y di frases como:</p>
-          <p class="text-slate-400 italic font-mono text-xs mt-1">"Cierre 105", "Cayó 20", "Triple 19", "Doble 16", "Atrás", "Corregir".</p>
+        <div class="help-item">
+          <span class="help-cmd">Código de Colores:</span>
+          <span>• Rojo = Triples (T)</span>
+          <span>• Blanco = Sencillos (S)</span>
+          <span>• Amarillo = Dobles (D) / Cierre</span>
+          <span>• Azul = Preparación (Deja D20 / D16)</span>
         </div>
       </div>
-
-      <button onclick="closeHelp()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-black py-3 rounded-2xl shadow-lg shadow-yellow-500/20">
-        Entendido
-      </button>
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <!-- Toast for Voice Input -->
+  <div id="toastVoice" class="toast-voice">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+    <span id="toastText">Escuchando...</span>
+  </div>
+
   <script>
-    // --- 1. DARTBOARD CONSTANTS & SETUP ---
-    const BOARD_RING = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
-    const DOUBLE_PREFERENCE = [40, 32, 20, 16, 24, 36, 28, 8, 10, 12, 50, 14, 18, 6, 4, 2];
+    /* ==========================================================================
+       1. DATA ENGINE & AUDITED TABLES
+       ========================================================================== */
 
-    // App State
-    let currentScore = 105;
-    let dartsLeft = 3;
-    let undoHistory = [];
-    let keypadVal = '0';
-    let recognition = null;
-    let isListening = false;
-    let isContinuous = false;
+    const DARTBOARD_CLOCKWISE = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
 
-    // Neighbor Helpers
     function getNeighbors(num) {
-      if (num === 25 || num === 50) return { left: 25, right: 25 };
-      const idx = BOARD_RING.indexOf(num);
-      if (idx === -1) return { left: num, right: num };
-      const left = BOARD_RING[(idx - 1 + 20) % 20];
-      const right = BOARD_RING[(idx + 1) % 20];
+      const idx = DARTBOARD_CLOCKWISE.indexOf(num);
+      if (idx === -1) return { left: 20, right: 20 };
+      const left = DARTBOARD_CLOCKWISE[(idx - 1 + 20) % 20];
+      const right = DARTBOARD_CLOCKWISE[(idx + 1) % 20];
       return { left, right };
     }
 
-    // Single Dart Value helper
-    function getDartValue(dartStr) {
+    // Explicit 1-dart checkouts (2..40 even, 50)
+    const CHECKOUT_1_DART = {};
+    for (let i = 2; i <= 40; i += 2) {
+      CHECKOUT_1_DART[i] = [`D${i / 2}`];
+    }
+    CHECKOUT_1_DART[50] = ['DB'];
+
+    // Explicit 2-dart checkouts
+    const CHECKOUT_2_DARTS = {
+      ...CHECKOUT_1_DART,
+      50: ['S10', 'D20'],
+      // 3..39 odd
+      3: ['S1', 'D1'], 5: ['S1', 'D2'], 7: ['S3', 'D2'], 9: ['S1', 'D4'], 11: ['S3', 'D4'],
+      13: ['S5', 'D4'], 15: ['S7', 'D4'], 17: ['S1', 'D8'], 19: ['S3', 'D8'], 21: ['S5', 'D8'],
+      23: ['S7', 'D8'], 25: ['S9', 'D8'], 27: ['S11', 'D8'], 29: ['S13', 'D8'], 31: ['S15', 'D8'],
+      33: ['S1', 'D16'], 35: ['S3', 'D16'], 37: ['S5', 'D16'], 39: ['S7', 'D16'],
+      // 41..60
+      41: ['S9', 'D16'], 42: ['S10', 'D16'], 43: ['S11', 'D16'], 44: ['S12', 'D16'], 45: ['S13', 'D16'],
+      46: ['S6', 'D20'], 47: ['S15', 'D16'], 48: ['S16', 'D16'], 49: ['S9', 'D20'], 50: ['S10', 'D20'],
+      51: ['S11', 'D20'], 52: ['S12', 'D20'], 53: ['S13', 'D20'], 54: ['S14', 'D20'], 55: ['S15', 'D20'],
+      56: ['S16', 'D20'], 57: ['S17', 'D20'], 58: ['S18', 'D20'], 59: ['S19', 'D20'], 60: ['S20', 'D20'],
+      // 61..70 Mandatory Parachute-to-Bull rule with 2 darts
+      61: ['T11', 'D14'], 62: ['T12', 'D13'], 63: ['T13', 'D12'], 64: ['T14', 'D11'], 65: ['T15', 'D10'],
+      66: ['T16', 'D9'], 67: ['T17', 'D8'], 68: ['T18', 'D7'], 69: ['T19', 'D6'], 70: ['T20', 'D5'],
+      // 71..110 audited favorite doubles
+      71: ['T13', 'D16'], 72: ['T16', 'D12'], 73: ['T19', 'D8'], 74: ['T14', 'D16'], 75: ['T17', 'D12'],
+      76: ['T20', 'D8'], 77: ['T19', 'D10'], 78: ['T18', 'D12'], 79: ['T13', 'D20'], 80: ['T20', 'D10'],
+      81: ['T19', 'D12'], 82: ['T14', 'D20'], 83: ['T17', 'D16'], 84: ['T20', 'D12'], 85: ['T15', 'D20'],
+      86: ['T18', 'D16'], 87: ['T17', 'D18'], 88: ['T16', 'D20'], 89: ['T19', 'D16'], 90: ['T18', 'D18'],
+      91: ['T17', 'D20'], 92: ['T20', 'D16'], 93: ['T19', 'D18'], 94: ['T18', 'D20'], 95: ['T19', 'D19'],
+      96: ['T20', 'D18'], 97: ['T19', 'D20'], 98: ['T20', 'D19'], 100: ['T20', 'D20'], 101: ['T17', 'DB'],
+      104: ['T18', 'DB'], 107: ['T19', 'DB'], 110: ['T20', 'DB']
+    };
+
+    // Explicit 3-dart checkouts
+    const CHECKOUT_3_DARTS = {
+      ...CHECKOUT_2_DARTS,
+      // 61..70 comfortable 2-dart routes with 3 darts
+      61: ['T15', 'D8'], 62: ['T10', 'D16'], 63: ['T13', 'D12'], 64: ['T16', 'D8'], 65: ['T15', 'D10'],
+      66: ['T10', 'D18'], 67: ['T17', 'D8'], 68: ['T20', 'D4'], 69: ['T19', 'D6'], 70: ['T10', 'D20'],
+      // 99
+      99: ['T19', 'S10', 'D16'],
+      // 101..110 (neighbor safe)
+      101: ['T20', 'S9', 'D16'], 102: ['T20', 'S10', 'D16'], 103: ['T19', 'S6', 'D20'], 104: ['T18', 'S18', 'D16'],
+      105: ['T20', 'S5', 'D20'], 106: ['T20', 'S6', 'D20'], 107: ['T19', 'S10', 'D20'], 108: ['T20', 'S16', 'D16'],
+      109: ['T20', 'S9', 'D20'], 110: ['T20', 'S10', 'D20'],
+      // 111..170 standard verified routes
+      111: ['T20', 'S19', 'D16'], 112: ['T20', 'S12', 'D20'], 113: ['T20', 'S13', 'D20'], 114: ['T20', 'S14', 'D20'],
+      115: ['T20', 'S15', 'D20'], 116: ['T20', 'S16', 'D20'], 117: ['T20', 'S17', 'D20'], 118: ['T20', 'S18', 'D20'],
+      119: ['T19', 'T12', 'D13'], 120: ['T20', 'S20', 'D20'], 121: ['T20', 'T11', 'D14'], 122: ['T18', 'T20', 'D4'],
+      123: ['T19', 'T16', 'D9'], 124: ['T20', 'T16', 'D8'], 125: ['S25', 'T20', 'D20'], 126: ['T19', 'T19', 'D6'],
+      127: ['T20', 'T17', 'D8'], 128: ['T18', 'T14', 'D16'], 129: ['T19', 'T16', 'D12'], 130: ['T20', 'T20', 'D5'],
+      131: ['T20', 'T13', 'D16'], 132: ['T20', 'T16', 'D12'], 133: ['T20', 'T19', 'D8'], 134: ['T20', 'T14', 'D16'],
+      135: ['T20', 'T17', 'D12'], 136: ['T20', 'T20', 'D8'], 137: ['T20', 'T19', 'D10'], 138: ['T20', 'T18', 'D12'],
+      139: ['T19', 'T14', 'D20'], 140: ['T20', 'T20', 'D10'], 141: ['T20', 'T19', 'D12'], 142: ['T20', 'T14', 'D20'],
+      143: ['T20', 'T17', 'D16'], 144: ['T20', 'T20', 'D12'], 145: ['T20', 'T15', 'D20'], 146: ['T20', 'T18', 'D16'],
+      147: ['T20', 'T17', 'D18'], 148: ['T20', 'T16', 'D20'], 149: ['T20', 'T19', 'D16'], 150: ['T20', 'T18', 'D18'],
+      151: ['T20', 'T17', 'D20'], 152: ['T20', 'T20', 'D16'], 153: ['T20', 'T19', 'D18'], 154: ['T20', 'T18', 'D20'],
+      155: ['T20', 'T19', 'D19'], 156: ['T20', 'T20', 'D18'], 157: ['T20', 'T19', 'D20'], 158: ['T20', 'T20', 'D19'],
+      160: ['T20', 'T20', 'D20'], 161: ['T20', 'T17', 'DB'], 164: ['T20', 'T18', 'DB'], 167: ['T20', 'T19', 'DB'],
+      170: ['T20', 'T20', 'DB']
+    };
+
+    // Bogey routes for 3 darts (isPrep = true)
+    const BOGEY_3_DARTS = {
+      169: { route: ['T20', 'T20', 'S9'], leave: 'D20' },
+      168: { route: ['T20', 'T20', 'S8'], leave: 'D20' },
+      166: { route: ['T20', 'T20', 'S6'], leave: 'D20' },
+      165: { route: ['T20', 'T20', 'S5'], leave: 'D20' },
+      163: { route: ['T20', 'T20', 'S3'], leave: 'D20' },
+      162: { route: ['T20', 'T20', 'S2'], leave: 'D20' },
+      159: { route: ['T20', 'T20', 'S7'], leave: 'D16' }
+    };
+
+    // Helper: calculate numeric value of a dart string ('T20' -> 60, 'S5' -> 5, 'D20' -> 40, 'DB' -> 50)
+    function parseDartValue(dartStr) {
       if (!dartStr) return 0;
       if (dartStr === 'DB') return 50;
-      if (dartStr === 'B' || dartStr === '25') return 25;
+      if (dartStr === 'S25') return 25;
       const type = dartStr[0];
-      const val = parseInt(dartStr.slice(1));
+      const val = parseInt(dartStr.slice(1), 10);
       if (type === 'T') return val * 3;
       if (type === 'D') return val * 2;
-      if (type === 'S') return val;
-      return 0;
+      return val;
     }
 
-    // --- 2. CHECKOUT ENGINE & NEIGHBOR PROTECTION ---
+    // Preparation Engine (for non-checkouts)
+    function getBestSetup(score, dartsLeft) {
+      const priorityDoubles = [
+        { target: 40, name: 'D20' },
+        { target: 32, name: 'D16' },
+        { target: 20, name: 'D10' },
+        { target: 16, name: 'D8' },
+        { target: 24, name: 'D12' },
+        { target: 36, name: 'D18' },
+        { target: 8, name: 'D4' },
+        { target: 28, name: 'D14' },
+        { target: 50, name: 'DB' }
+      ];
 
-    // Can a score be checked out in 1 dart?
-    function get1DartCheckout(score) {
-      if (score === 50) return 'DB';
-      if (score <= 40 && score % 2 === 0 && score > 0) return 'D' + (score / 2);
-      return null;
-    }
-
-    // Can a score be checked out in 2 darts?
-    function canCheckoutIn2(score) {
-      if (score < 2 || score > 110) return false;
-      if (get1DartCheckout(score)) return true;
-
-      // Try all singles, triples, 25
-      for (let s = 1; s <= 20; s++) {
-        if (get1DartCheckout(score - s)) return true;
-        if (get1DartCheckout(score - s * 3)) return true;
-      }
-      if (get1DartCheckout(score - 25)) return true;
-      return false;
-    }
-
-    // Optimal 2-dart checkout lookup
-    function get2DartCheckout(score) {
-      if (score < 2 || score > 110) return null;
-      const direct = get1DartCheckout(score);
-      if (direct) return [direct];
-
-      // Parachute Rule for 61 - 70
-      const PARACHUTE_MAP = {
-        70: ['T20', 'D5'],
-        69: ['T19', 'D6'],
-        68: ['T18', 'D7'],
-        67: ['T17', 'D8'],
-        66: ['T16', 'D9'],
-        65: ['T15', 'D10'],
-        64: ['T14', 'D11'],
-        63: ['T13', 'D12'],
-        62: ['T12', 'D13'],
-        61: ['T11', 'D14']
-      };
-      if (PARACHUTE_MAP[score]) return PARACHUTE_MAP[score];
-
-      // General 2-dart search
-      let bestPair = null;
-      let bestRank = -999;
-
-      // Try Triples first
-      for (let t = 20; t >= 1; t--) {
-        const rem = score - t * 3;
-        const d = get1DartCheckout(rem);
-        if (d) {
-          const rank = 100 + (t === 20 ? 10 : 0);
-          if (rank > bestRank) { bestRank = rank; bestPair = [`T${t}`, d]; }
+      if (dartsLeft === 1) {
+        // Try Single S1..S20
+        for (const p of priorityDoubles) {
+          const diff = score - p.target;
+          if (diff >= 1 && diff <= 20) {
+            return { route: [`S${diff}`], leave: p.name, isPrep: true };
+          }
         }
-      }
-
-      // Try Singles
-      for (let s = 20; s >= 1; s--) {
-        const rem = score - s;
-        const d = get1DartCheckout(rem);
-        if (d) {
-          const rank = 50 + s;
-          if (rank > bestRank) { bestRank = rank; bestPair = [`S${s}`, d]; }
+        // Try Triple T1..T20
+        for (const p of priorityDoubles) {
+          const diff = score - p.target;
+          if (diff > 0 && diff % 3 === 0 && (diff / 3) <= 20) {
+            return { route: [`T${diff / 3}`], leave: p.name, isPrep: true };
+          }
         }
+        // Fallback: throw T20 or T19 (avoid dead 2-dart numbers)
+        const rem60 = score - 60;
+        const deadRem = [99, 102, 103, 105, 106, 108, 109, 169, 168, 166, 165, 163, 162, 159];
+        if (deadRem.includes(rem60)) {
+          return { route: ['T19'], leave: `${score - 57}`, isPrep: true };
+        }
+        return { route: ['T20'], leave: `${rem60 > 0 ? rem60 : score}`, isPrep: true };
       }
 
-      // Outer Bull
-      const remB = score - 25;
-      const dB = get1DartCheckout(remB);
-      if (dB && 40 > bestRank) {
-        bestPair = ['25', dB];
+      if (dartsLeft === 2) {
+        // Try Triple + Single to leave D20 (40) or D16 (32)
+        const targetLeaves = [
+          { score: 40, name: 'D20' },
+          { score: 32, name: 'D16' }
+        ];
+
+        for (const tLeave of targetLeaves) {
+          const needed = score - tLeave.score;
+          if (needed > 0) {
+            for (const tVal of [20, 19, 18, 17, 16, 15, 14]) {
+              const triplePts = tVal * 3;
+              const remSingle = needed - triplePts;
+              if (remSingle >= 1 && remSingle <= 20) {
+                return { route: [`T${tVal}`, `S${remSingle}`], leave: tLeave.name, isPrep: true };
+              }
+            }
+          }
+        }
+
+        // High score preparation
+        if (score > 152) {
+          const rem = score - 120;
+          return { route: ['T20', 'T20'], leave: rem <= 110 ? `Cierre ${rem}` : `${rem}`, isPrep: true };
+        }
+
+        return { route: ['T20', 'S20'], leave: `${score - 80}`, isPrep: true };
       }
 
-      return bestPair;
+      // 3 darts fallback
+      return { route: ['T20', 'T20', 'S20'], leave: 'D20', isPrep: true };
     }
 
-    // 3-Dart Checkout Calculation with Lateral Protection (101-110)
-    function get3DartCheckout(score) {
-      if (score < 2 || score > 170) return null;
-      if (score <= 110) {
-        const in2 = get2DartCheckout(score);
-        if (in2 && in2.length <= 2) {
-          // If score <= 60, we might return 2-dart checkout
-          if (score <= 40 && get1DartCheckout(score)) return [get1DartCheckout(score)];
+    // Main Engine function: Returns { route: Array, leave: String, isPrep: Boolean }
+    function getRoute(score, dartsLeft) {
+      if (score <= 1) return { route: ['SIN CIERRE'], leave: '', isPrep: true };
+
+      if (dartsLeft === 1) {
+        if (CHECKOUT_1_DART[score]) {
+          return { route: CHECKOUT_1_DART[score], leave: '', isPrep: false };
         }
+        return getBestSetup(score, 1);
       }
 
-      // High out table overrides for traditional optimal routes
-      const OVERRIDES_3D = {
-        170: ['T20', 'T20', 'DB'],
-        167: ['T20', 'T19', 'DB'],
-        164: ['T20', 'T19', 'DB'],
-        161: ['T20', 'T17', 'DB'],
-        160: ['T20', 'T20', 'D20'],
-        158: ['T20', 'T20', 'D19'],
-        157: ['T20', 'T19', 'D20'],
-        156: ['T20', 'T20', 'D18'],
-        155: ['T20', 'T19', 'D19'],
-        154: ['T20', 'T18', 'D20'],
-        153: ['T20', 'T19', 'D18'],
-        152: ['T20', 'T20', 'D16'],
-        151: ['T20', 'T17', 'D20'],
-        150: ['T20', 'T18', 'D18'],
-        149: ['T20', 'T19', 'D16'],
-        148: ['T20', 'T16', 'D20'],
-        147: ['T20', 'T17', 'D16'],
-        146: ['T20', 'T18', 'D16'],
-        145: ['T20', 'T15', 'D20'],
-        144: ['T20', 'T20', 'D12'],
-        143: ['T20', 'T17', 'D16'],
-        142: ['T20', 'T14', 'D20'],
-        141: ['T20', 'T15', 'D18'],
-        140: ['T20', 'T20', 'D10'],
-        139: ['T20', 'T13', 'D20'],
-        138: ['T20', 'T14', 'D18'],
-        137: ['T19', 'T16', 'D16'],
-        136: ['T20', 'T20', 'D8'],
-        135: ['T20', 'T15', 'D15'],
-        134: ['T20', 'T14', 'D16'],
-        133: ['T20', 'T19', 'D8'],
-        132: ['T20', 'T16', 'D12'],
-        131: ['T20', 'T13', 'D16'],
-        130: ['T20', 'T18', 'D8'],
-        129: ['T19', 'T16', 'D12'],
-        128: ['T18', 'T14', 'D16'],
-        127: ['T20', 'T17', 'D8'],
-        126: ['T19', 'T19', 'D6'],
-        125: ['25', 'T20', 'D20'],
-        124: ['T20', 'T16', 'D8'],
-        123: ['T19', 'T16', 'D9'],
-        122: ['T18', 'T18', 'D7'],
-        121: ['T20', 'T15', 'D8'],
-        120: ['T20', 'S20', 'D20'],
-        119: ['T19', 'T10', 'D16'],
-        118: ['T20', 'S18', 'D20'],
-        117: ['T20', 'S17', 'D20'],
-        116: ['T20', 'S16', 'D20'],
-        115: ['T20', 'S15', 'D20'],
-        114: ['T20', 'S14', 'D20'],
-        113: ['T19', 'S16', 'D20'],
-        112: ['T20', 'S12', 'D20'],
-        111: ['T20', 'S11', 'D20']
-      };
-
-      if (OVERRIDES_3D[score]) return OVERRIDES_3D[score];
-
-      // --- LATERAL PROTECTION FOR 101-110 ---
-      if (score >= 101 && score <= 110) {
-        // Specific user-requested optimal protection routes
-        const PROTECTED_101_110 = {
-          105: ['T20', 'S5', 'D20'],
-          107: ['T19', 'S10', 'D20'],
-          104: ['T19', 'S7', 'D20'],
-          103: ['T19', 'S6', 'D20'],
-          102: ['T20', 'S2', 'D20'],
-          101: ['T20', 'S1', 'D20'],
-          106: ['T20', 'S6', 'D20'],
-          108: ['T20', 'S8', 'D20'],
-          109: ['T20', 'S9', 'D20'],
-          110: ['T20', 'S10', 'D20']
-        };
-        if (PROTECTED_101_110[score]) return PROTECTED_101_110[score];
+      if (dartsLeft === 2) {
+        if (CHECKOUT_2_DARTS[score]) {
+          return { route: CHECKOUT_2_DARTS[score], leave: '', isPrep: false };
+        }
+        return getBestSetup(score, 2);
       }
 
-      // General fallback calculation for 3-dart checkout
-      for (let t = 20; t >= 1; t--) {
-        const rem = score - t * 3;
-        const sub = get2DartCheckout(rem);
-        if (sub) return [`T${t}`, ...sub];
+      if (dartsLeft === 3) {
+        if (BOGEY_3_DARTS[score]) {
+          return { route: BOGEY_3_DARTS[score].route, leave: BOGEY_3_DARTS[score].leave, isPrep: true };
+        }
+        if (CHECKOUT_3_DARTS[score]) {
+          return { route: CHECKOUT_3_DARTS[score], leave: '', isPrep: false };
+        }
+        return getBestSetup(score, 3);
       }
 
-      for (let s = 20; s >= 1; s--) {
-        const rem = score - s;
-        const sub = get2DartCheckout(rem);
-        if (sub) return [`S${s}`, ...sub];
-      }
-
-      return null;
+      return { route: ['SIN CIERRE'], leave: '', isPrep: true };
     }
 
-    // Primary route resolver based on score & remaining darts
-    function calculateRoute(score, darts) {
-      if (score <= 1 || score > 170) return null;
+    /* ==========================================================================
+       2. STATE & UI CONTROLLER
+       ========================================================================== */
 
-      if (darts === 1) {
-        const d1 = get1DartCheckout(score);
-        if (d1) return [d1];
-        // Optimal setup leaving D20 (40) or D16 (32)
-        if (score > 40) {
-          const targetRem = 40;
-          let diff = score - targetRem;
-          if (diff >= 1 && diff <= 20) return [`S${diff}`];
-          if (diff > 20 && diff % 2 === 0 && diff <= 40) return [`D${diff/2}`];
-          // Try leaving D16
-          diff = score - 32;
-          if (diff >= 1 && diff <= 20) return [`S${diff}`];
-        }
-        // General setup: leave even number <= 40
-        for (let s = 20; s >= 1; s--) {
-          const r = score - s;
-          if (r > 1 && r <= 40 && r % 2 === 0) return [`S${s}`];
-        }
-        return [`S${Math.min(20, score - 2)}`];
-      }
+    let state = {
+      score: 105,
+      dartsLeft: 3,
+      continuous: false,
+      isListening: false,
+      history: []
+    };
 
-      if (darts === 2) {
-        const route2 = get2DartCheckout(score);
-        if (route2) return route2;
-        // 2-dart setup
-        const firstS = Math.min(20, Math.max(1, score - 40));
-        const rem = score - firstS;
-        const nextRoute = calculateRoute(rem, 1);
-        return [`S${firstS}`, ...(nextRoute || [])];
-      }
+    // DOM Elements
+    const elScoreDisplay = document.getElementById('scoreDisplay');
+    const elMainRouteBadges = document.getElementById('mainRouteBadges');
+    const elPrepPillHero = document.getElementById('prepPillHero');
+    const elMissSection = document.getElementById('missSection');
+    const elMissTitle = document.getElementById('missTitle');
+    const elMissGrid = document.getElementById('missGrid');
+    const elBtnUndo = document.getElementById('btnUndo');
+    const elSegmentBtns = document.querySelectorAll('.segment-btn');
+    const elSwitchContinuous = document.getElementById('switchContinuous');
 
-      // 3 Darts
-      const route3 = get3DartCheckout(score);
-      if (route3) return route3;
-
-      // Setup for scores > 170 or non-closable
-      if (score > 170) {
-        return ['T20', 'T20', 'T20'];
-      }
-      return ['T20', 'T20', 'D20'];
+    function saveHistory() {
+      state.history.push({
+        score: state.score,
+        dartsLeft: state.dartsLeft
+      });
+      elBtnUndo.disabled = false;
     }
 
-    // --- 3. UI RENDERING ENGINE ---
+    function undo() {
+      if (state.history.length === 0) return;
+      const prev = state.history.pop();
+      state.score = prev.score;
+      state.dartsLeft = prev.dartsLeft;
+      if (state.history.length === 0) elBtnUndo.disabled = true;
+      render();
+    }
 
-    function createBadge(dartStr, isHero = false) {
+    function updateScore(newScore, newDarts = 3) {
+      if (newScore < 2) newScore = 2;
+      if (newScore > 170) newScore = 170;
+      saveHistory();
+      state.score = newScore;
+      state.dartsLeft = newDarts;
+      render();
+    }
+
+    function renderBadge(dartStr) {
       const span = document.createElement('span');
-      span.className = `dart-badge ${isHero ? 'dart-badge-hero' : ''}`;
-      
-      if (dartStr.startsWith('T')) {
-        span.className += ' bg-tripleRed text-white border border-red-400/30';
-      } else if (dartStr.startsWith('D') || dartStr === 'DB') {
-        span.className += ' bg-doubleYellow text-slate-950 border border-yellow-300';
-      } else {
-        span.className += ' bg-white text-slate-950 border border-slate-300';
-      }
-
+      span.className = 'dart-badge';
+      if (dartStr.startsWith('T')) span.classList.add('badge-triple');
+      else if (dartStr.startsWith('D') || dartStr === 'DB') span.classList.add('badge-double');
+      else span.classList.add('badge-single');
       span.textContent = dartStr;
       return span;
     }
 
-    function renderApp() {
-      // Update Score & Controls UI
-      document.getElementById('scoreDisplay').textContent = currentScore;
-      
-      // Update Darts Selector Buttons
-      [1, 2, 3].forEach(d => {
-        const btn = document.getElementById(`btnDarts${d}`);
-        if (d === dartsLeft) {
-          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold bg-yellow-500 text-slate-950 shadow-md';
-        } else {
-          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold text-slate-400 hover:text-white';
-        }
+    function render() {
+      // 1. Score display
+      elScoreDisplay.textContent = state.score;
+
+      // 2. Segmented control
+      elSegmentBtns.forEach(btn => {
+        const d = parseInt(btn.dataset.darts, 10);
+        btn.classList.toggle('active', d === state.dartsLeft);
       });
 
-      // Undo button visibility
-      const btnUndo = document.getElementById('btnUndo');
-      if (undoHistory.length > 0) {
-        btnUndo.classList.remove('hidden');
-        btnUndo.classList.add('flex');
+      // 3. Hero Main Route
+      const mainResult = getRoute(state.score, state.dartsLeft);
+      elMainRouteBadges.innerHTML = '';
+      
+      mainResult.route.forEach((dart, idx) => {
+        if (idx > 0) {
+          const arrow = document.createElement('span');
+          arrow.className = 'arrow-icon';
+          arrow.textContent = '→';
+          elMainRouteBadges.appendChild(arrow);
+        }
+        elMainRouteBadges.appendChild(renderBadge(dart));
+      });
+
+      // Blue pill for hero prep
+      if (mainResult.isPrep && mainResult.leave) {
+        elPrepPillHero.style.display = 'inline-block';
+        elPrepPillHero.textContent = `Deja ${mainResult.leave}`;
       } else {
-        btnUndo.classList.add('hidden');
-        btnUndo.classList.remove('flex');
+        elPrepPillHero.style.display = 'none';
       }
 
-      // Render Hero Route
-      const heroContainer = document.getElementById('heroRouteContainer');
-      heroContainer.innerHTML = '';
-
-      const route = calculateRoute(currentScore, dartsLeft);
-      if (route && route.length > 0) {
-        route.forEach((dart, idx) => {
-          if (idx > 0) {
-            const arrow = document.createElement('span');
-            arrow.className = 'text-slate-500 font-bold text-lg sm:text-2xl px-0.5';
-            arrow.textContent = '→';
-            heroContainer.appendChild(arrow);
-          }
-          heroContainer.appendChild(createBadge(dart, true));
-        });
-      } else {
-        const noOut = document.createElement('span');
-        noOut.className = 'text-slate-400 font-bold text-lg';
-        noOut.textContent = 'Sin cierre directo (Preparar)';
-        heroContainer.appendChild(noOut);
-      }
-
-      // Render Miss Contingency Cards
-      renderContingencyCards(route);
-    }
-
-    function renderContingencyCards(currentRoute) {
-      const grid = document.getElementById('missCardsGrid');
-      const titleEl = document.getElementById('contingencyTitle');
-      grid.innerHTML = '';
-
-      if (dartsLeft <= 1) {
-        titleEl.textContent = 'ÚLTIMO DARDO EN JUEGO';
-        grid.className = 'grid grid-cols-1 gap-3';
-        const card = document.createElement('div');
-        card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center text-slate-400 font-bold';
-        card.textContent = 'Ajusta tu tiro directo al doble sugerido arriba.';
-        grid.appendChild(card);
+      // 4. Miss Reactions Section
+      if (state.dartsLeft === 1) {
+        elMissSection.style.display = 'none';
         return;
       }
 
-      const dartNum = 4 - dartsLeft; // 1 or 2
-      titleEl.textContent = `REACCIÓN ANTE FALLO EN DARDO ${dartNum}`;
+      elMissSection.style.display = 'flex';
+      const dartIndex = 4 - state.dartsLeft; // Dardo 1 or Dardo 2
+      elMissTitle.textContent = `REACCIÓN ANTE FALLO EN DARDO ${dartIndex}`;
 
-      if (!currentRoute || currentRoute.length === 0) return;
-
-      const firstDart = currentRoute[0];
-      const targetVal = getDartValue(firstDart);
-
-      // Extract target number
-      let targetNum = 20;
-      if (firstDart.startsWith('T') || firstDart.startsWith('D') || firstDart.startsWith('S')) {
-        targetNum = parseInt(firstDart.slice(1)) || 20;
+      // Target segment of first dart
+      const targetDart = mainResult.route[0];
+      const targetVal = parseDartValue(targetDart);
+      
+      // Determine segment number for neighbors
+      let baseSegment = 20;
+      if (targetDart && targetDart !== 'DB' && targetDart !== 'S25') {
+        baseSegment = parseInt(targetDart.slice(1), 10) || 20;
       }
+      const neighbors = getNeighbors(baseSegment);
 
-      const { left, right } = getNeighbors(targetNum);
-
-      // Define 5 Contingency Scenarios
-      const scenarios = [
-        { key: 'S_target', label: `Si cae S${targetNum}`, dartApplied: `S${targetNum}` },
-        { key: 'S_left', label: `Si cae S${left}`, dartApplied: `S${left}` },
-        { key: 'S_right', label: `Si cae S${right}`, dartApplied: `S${right}` },
-        { key: 'T_left', label: `Si cae T${left}`, dartApplied: `T${left}` },
-        { key: 'T_right', label: `Si cae T${right}`, dartApplied: `T${right}` }
+      // Define 5 miss scenarios
+      const missScenarios = [
+        { label: `Si cae S${baseSegment}`, hit: `S${baseSegment}`, pts: baseSegment },
+        { label: `Si cae S${neighbors.left}`, hit: `S${neighbors.left}`, pts: neighbors.left },
+        { label: `Si cae S${neighbors.right}`, hit: `S${neighbors.right}`, pts: neighbors.right },
+        { label: `Si cae T${neighbors.left}`, hit: `T${neighbors.left}`, pts: neighbors.left * 3 },
+        { label: `Si cae T${neighbors.right}`, hit: `T${neighbors.right}`, pts: neighbors.right * 3 }
       ];
 
-      grid.className = 'grid grid-cols-1 md:grid-cols-3 gap-3';
+      elMissGrid.innerHTML = '';
 
-      scenarios.forEach((scen, idx) => {
-        const subVal = getDartValue(scen.dartApplied);
-        const remScore = currentScore - subVal;
-        const nextDarts = dartsLeft - 1;
-
-        const nextRoute = calculateRoute(remScore, nextDarts);
-        const canFinish = (remScore >= 2 && remScore <= 170 && nextRoute && get1DartCheckout(nextRoute[nextRoute.length - 1]));
+      missScenarios.forEach(scen => {
+        const remScore = state.score - scen.pts;
+        const nextDarts = state.dartsLeft - 1;
+        const subResult = getRoute(remScore, nextDarts);
 
         const card = document.createElement('div');
-        // Layout: 3 wide top row, 2 centered bottom row on desktop
-        let gridSpan = '';
-        if (idx >= 3) {
-          gridSpan = 'md:col-span-1 md:last:col-span-1';
-        }
-        
-        card.className = `bg-cardBg border border-cardBorder hover:border-slate-600 rounded-2xl p-4 flex flex-col justify-between transition cursor-pointer active:scale-[0.98] shadow-lg ${gridSpan}`;
-        card.onclick = () => applyDartHit(subVal);
-
-        // Header
-        const header = document.createElement('div');
-        header.className = 'miss-card-header flex items-center justify-between mb-3';
-
-        const labelSpan = document.createElement('span');
-        labelSpan.className = 'text-sm font-extrabold text-slate-200 tracking-wide';
-        labelSpan.textContent = scen.label;
-        header.appendChild(labelSpan);
-
-        // Preparation Blue Pill if no immediate checkout
-        if (remScore > 0 && nextRoute) {
-          const lastDart = nextRoute[nextRoute.length - 1];
-          if (lastDart && (lastDart.startsWith('D') || lastDart === 'DB')) {
-            const prepPill = document.createElement('span');
-            prepPill.className = 'bg-setupBlue text-white text-xs font-black px-2.5 py-1 rounded-lg shadow';
-            prepPill.textContent = `Deja ${lastDart}`;
-            header.appendChild(prepPill);
+        card.className = 'miss-card';
+        card.onclick = () => {
+          if (remScore >= 2) {
+            updateScore(remScore, nextDarts);
           }
+        };
+
+        const header = document.createElement('div');
+        header.className = 'miss-card-header';
+        
+        const cond = document.createElement('span');
+        cond.className = 'miss-condition';
+        cond.textContent = scen.label;
+        header.appendChild(cond);
+
+        // Blue pill ONLY if preparation (NO checkout)
+        if (subResult.isPrep && subResult.leave) {
+          const pill = document.createElement('span');
+          pill.className = 'badge-prep-pill';
+          pill.textContent = `Deja ${subResult.leave}`;
+          header.appendChild(pill);
         }
+
+        const routeDiv = document.createElement('div');
+        routeDiv.className = 'miss-route';
+
+        subResult.route.forEach((d, i) => {
+          if (i > 0) {
+            const arr = document.createElement('span');
+            arr.className = 'arrow-icon';
+            arr.textContent = '→';
+            routeDiv.appendChild(arr);
+          }
+          routeDiv.appendChild(renderBadge(d));
+        });
+
         card.appendChild(header);
+        card.appendChild(routeDiv);
+        elMissGrid.appendChild(card);
+      });
+    }
 
-        // Body with Badges
-        const body = document.createElement('div');
-        body.className = 'flex flex-wrap items-center gap-2 mt-1';
+    /* ==========================================================================
+       3. EVENT LISTENERS & MODALS
+       ========================================================================== */
 
-        if (remScore <= 0) {
-          const bust = document.createElement('span');
-          bust.className = 'text-rose-400 font-black text-lg';
-          bust.textContent = 'BUST (Se pasa)';
-          body.appendChild(bust);
-        } else if (nextRoute && nextRoute.length > 0) {
-          nextRoute.forEach((d, i) => {
-            if (i > 0) {
-              const arr = document.createElement('span');
-              arr.className = 'text-slate-600 font-bold text-sm';
-              arr.textContent = '→';
-              body.appendChild(arr);
-            }
-            body.appendChild(createBadge(d, false));
-          });
-        } else {
-          const noRoute = document.createElement('span');
-          noRoute.className = 'text-slate-500 font-semibold text-sm';
-          noRoute.textContent = `Quedan ${remScore}`;
-          body.appendChild(noRoute);
+    // Plus / Minus Buttons
+    document.getElementById('btnMinus').onclick = () => updateScore(state.score - 1, state.dartsLeft);
+    document.getElementById('btnPlus').onclick = () => updateScore(state.score + 1, state.dartsLeft);
+
+    // Segmented Buttons
+    elSegmentBtns.forEach(btn => {
+      btn.onclick = () => {
+        const d = parseInt(btn.dataset.darts, 10);
+        if (d !== state.dartsLeft) {
+          saveHistory();
+          state.dartsLeft = d;
+          render();
         }
+      };
+    });
 
-        card.appendChild(body);
-        grid.appendChild(card);
-      });
-    }
+    // Undo Button
+    elBtnUndo.onclick = undo;
 
-    // --- 4. ACTION & STATE MANAGEMENT ---
-
-    function setScore(newScore) {
-      saveState();
-      currentScore = Math.max(2, Math.min(170, newScore));
-      dartsLeft = 3;
-      renderApp();
-    }
-
-    function changeScore(delta) {
-      saveState();
-      currentScore = Math.max(2, Math.min(170, currentScore + delta));
-      renderApp();
-    }
-
-    function setDartsLeft(count) {
-      saveState();
-      dartsLeft = count;
-      renderApp();
-    }
-
-    function applyDartHit(dartPoints) {
-      saveState();
-      currentScore = currentScore - dartPoints;
-      if (currentScore < 2) {
-        showToast('¡Bust / Sin cierre!');
-      }
-      dartsLeft = dartsLeft - 1;
-      if (dartsLeft < 1) {
-        dartsLeft = 3;
-      }
-      renderApp();
-    }
-
-    function saveState() {
-      undoHistory.push({
-        score: currentScore,
-        darts: dartsLeft
-      });
-      if (undoHistory.length > 20) undoHistory.shift();
-    }
-
-    function undoLastAction() {
-      if (undoHistory.length > 0) {
-        const last = undoHistory.pop();
-        currentScore = last.score;
-        dartsLeft = last.darts;
-        renderApp();
-      }
-    }
-
-    // --- 5. KEYPAD & HELP MODALS ---
+    // Keypad Modal Logic
+    const elModalKeypad = document.getElementById('modalKeypad');
+    const elKeypadValue = document.getElementById('keypadValue');
 
     function openKeypad() {
-      keypadVal = '0';
-      document.getElementById('keypadDisplay').textContent = '0';
-      document.getElementById('keypadModal').classList.remove('hidden');
+      elKeypadValue.textContent = '0';
+      elModalKeypad.classList.add('open');
     }
 
     function closeKeypad() {
-      document.getElementById('keypadModal').classList.add('hidden');
+      elModalKeypad.classList.remove('open');
     }
 
-    function pressKey(key) {
-      if (key === 'C') {
-        keypadVal = '0';
-      } else if (key === 'BS') {
-        keypadVal = keypadVal.length > 1 ? keypadVal.slice(0, -1) : '0';
-      } else {
-        if (keypadVal === '0') keypadVal = key;
-        else if (keypadVal.length < 3) keypadVal += key;
-      }
-      document.getElementById('keypadDisplay').textContent = keypadVal;
-    }
+    document.getElementById('scoreDisplay').onclick = openKeypad;
+    document.getElementById('btnOpenKeypad').onclick = openKeypad;
+    document.getElementById('btnCloseKeypad').onclick = closeKeypad;
 
-    function setKeypadValue(val) {
-      keypadVal = val.toString();
-      document.getElementById('keypadDisplay').textContent = keypadVal;
-    }
+    document.querySelectorAll('.btn-key').forEach(btn => {
+      btn.onclick = () => {
+        const key = btn.dataset.key;
+        let cur = elKeypadValue.textContent;
 
-    function confirmKeypad() {
-      const parsed = parseInt(keypadVal);
-      if (!isNaN(parsed) && parsed >= 2 && parsed <= 170) {
-        setScore(parsed);
+        if (key === 'C') {
+          elKeypadValue.textContent = '0';
+        } else if (key === 'OK') {
+          const val = parseInt(cur, 10);
+          if (val >= 2 && val <= 170) {
+            updateScore(val, 3);
+          }
+          closeKeypad();
+        } else {
+          if (cur === '0') cur = key;
+          else if (cur.length < 3) cur += key;
+          elKeypadValue.textContent = cur;
+        }
+      };
+    });
+
+    document.querySelectorAll('.btn-preset').forEach(btn => {
+      btn.onclick = () => {
+        const val = parseInt(btn.dataset.val, 10);
+        updateScore(val, 3);
         closeKeypad();
-      } else {
-        showToast('Puntaje debe ser entre 2 y 170');
-      }
-    }
+      };
+    });
 
-    function openHelp() {
-      document.getElementById('helpModal').classList.remove('hidden');
-    }
+    // Help Modal Logic
+    const elModalHelp = document.getElementById('modalHelp');
+    document.getElementById('btnHelp').onclick = () => elModalHelp.classList.add('open');
+    document.getElementById('btnCloseHelp').onclick = () => elModalHelp.classList.remove('open');
 
-    function closeHelp() {
-      document.getElementById('helpModal').classList.add('hidden');
-    }
+    // Close modals when clicking backdrop
+    [elModalKeypad, elModalHelp].forEach(m => {
+      m.onclick = (e) => {
+        if (e.target === m) m.classList.remove('open');
+      };
+    });
 
-    // --- 6. VOICE CONTROL ENGINE (Web Speech API es-CO) ---
+    // Continuous Switch Toggle
+    elSwitchContinuous.onclick = () => {
+      state.continuous = !state.continuous;
+      elSwitchContinuous.classList.toggle('active', state.continuous);
+    };
 
-    function showToast(text) {
-      const toast = document.getElementById('voiceToast');
-      const toastText = document.getElementById('voiceToastText');
-      toastText.textContent = text;
-      toast.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
-      
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+    /* ==========================================================================
+       4. VOICE CONTROL ENGINE (Web Speech API)
+       ========================================================================== */
+
+    const elBtnVoice = document.getElementById('btnVoice');
+    const elToastVoice = document.getElementById('toastVoice');
+    const elToastText = document.getElementById('toastText');
+    let toastTimeout = null;
+
+    function showToast(msg) {
+      elToastText.textContent = msg;
+      elToastVoice.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        elToastVoice.classList.remove('show');
       }, 2500);
     }
 
-    function initVoice() {
-      const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!Speech) return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
 
-      recognition = new Speech();
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
       recognition.lang = 'es-CO';
       recognition.continuous = false;
       recognition.interimResults = false;
 
       recognition.onstart = () => {
-        isListening = true;
-        document.getElementById('btnVoice').classList.add('listening-pulse');
-        document.getElementById('voiceHintBanner').classList.remove('hidden');
+        state.isListening = true;
+        elBtnVoice.classList.add('listening');
+        showToast('Escuchando orden...');
       };
 
       recognition.onend = () => {
-        isListening = false;
-        document.getElementById('btnVoice').classList.remove('listening-pulse');
-        document.getElementById('voiceHintBanner').classList.add('hidden');
-        if (isContinuous) {
-          try { recognition.start(); } catch(e) {}
+        state.isListening = false;
+        elBtnVoice.classList.remove('listening');
+        if (state.continuous) {
+          try { recognition.start(); } catch (e) {}
         }
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase().trim();
-        showToast(`Escuché: "${transcript}"`);
-        parseVoiceCommand(transcript);
+        const text = event.results[0][0].transcript.toLowerCase().trim();
+        showToast(`" ${text} "`);
+        parseVoiceCommand(text);
+      };
+
+      recognition.onerror = () => {
+        state.isListening = false;
+        elBtnVoice.classList.remove('listening');
       };
     }
 
@@ -933,97 +1347,71 @@
         showToast('Reconocimiento de voz no soportado');
         return;
       }
-      if (isListening) {
+      if (state.isListening) {
         recognition.stop();
       } else {
-        try { recognition.start(); } catch(e) {}
+        try { recognition.start(); } catch (e) {}
       }
     }
 
-    function toggleContinuousVoice(val) {
-      isContinuous = val;
-      if (isContinuous && !isListening) {
+    elBtnVoice.onclick = toggleVoice;
+
+    // Keyboard Shortcuts (Spacebar for Voice)
+    window.onkeydown = (e) => {
+      if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
         toggleVoice();
       }
-    }
+    };
 
     function parseVoiceCommand(cmd) {
-      // Spanish Number Mapper
-      const numWords = {
-        'cero': 0, 'uno': 1, 'dos': 2, 'tres': 3, 'cuatro': 4, 'cinco': 5,
-        'seis': 6, 'siete': 7, 'ocho': 8, 'nueve': 9, 'diez': 10,
-        'once': 11, 'doce': 12, 'trece': 13, 'catorce': 14, 'quince': 15,
-        'dieciséis': 16, 'diecisiete': 17, 'dieciocho': 18, 'diecinueve': 19, 'veinte': 20,
-        'veinticinco': 25, 'cincuenta': 50, 'ciento cinco': 105, 'ciento siete': 107
-      };
+      // 1. Score setting ("cierre 105", "tengo 85", "170")
+      const numMatch = cmd.match(/\b(1[0-6][0-9]|170|[2-9][0-9])\b/);
+      if (cmd.includes('cierre') || cmd.includes('tengo') || cmd.includes('puntaje')) {
+        if (numMatch) {
+          updateScore(parseInt(numMatch[0], 10), 3);
+          return;
+        }
+      }
 
-      // Undo commands
-      if (cmd.includes('atrás') || cmd.includes('deshacer') || cmd.includes('corregir')) {
-        undoLastAction();
+      // Direct high score number command
+      if (numMatch && parseInt(numMatch[0], 10) >= 61) {
+        updateScore(parseInt(numMatch[0], 10), 3);
         return;
       }
 
-      // Check for triple / double / single explicit hits
+      // Undo command
+      if (cmd.includes('atrás') || cmd.includes('deshacer')) {
+        undo();
+        return;
+      }
+
+      // Impact deduction commands
+      let pts = 0;
       if (cmd.includes('triple')) {
-        const match = cmd.match(/triple\s+(\d+|[a-záéíóú]+)/);
-        if (match) {
-          let n = parseInt(match[1]) || numWords[match[1]];
-          if (n >= 1 && n <= 20) applyDartHit(n * 3);
-          return;
-        }
+        const m = cmd.match(/\d+/);
+        if (m) pts = parseInt(m[0], 10) * 3;
+      } else if (cmd.includes('doble')) {
+        const m = cmd.match(/\d+/);
+        if (m) pts = parseInt(m[0], 10) * 2;
+      } else if (cmd.includes('bull') || cmd.includes('centro')) {
+        pts = 50;
+      } else if (cmd.includes('sencillo') || cmd.includes('cayó')) {
+        const m = cmd.match(/\d+/);
+        if (m) pts = parseInt(m[0], 10);
+      } else if (cmd.includes('afuera') || cmd.includes('cero')) {
+        pts = 0;
       }
 
-      if (cmd.includes('doble')) {
-        const match = cmd.match(/doble\s+(\d+|[a-záéíóú]+)/);
-        if (match) {
-          let n = parseInt(match[1]) || numWords[match[1]];
-          if (n >= 1 && n <= 20) applyDartHit(n * 2);
-          return;
-        }
-      }
-
-      if (cmd.includes('bull') || cmd.includes('centro')) {
-        applyDartHit(50);
-        return;
-      }
-
-      // General number extractions
-      const matchNum = cmd.match(/\d+/);
-      let parsedNum = matchNum ? parseInt(matchNum[0]) : null;
-
-      if (!parsedNum) {
-        Object.keys(numWords).forEach(word => {
-          if (cmd.includes(word)) parsedNum = numWords[word];
-        });
-      }
-
-      if (parsedNum !== null) {
-        // If > 60 or command contains 'cierre' / 'tengo' / 'quedan', set score
-        if (parsedNum > 60 || cmd.includes('cierre') || cmd.includes('tengo') || cmd.includes('me toca')) {
-          setScore(parsedNum);
-        } else if (parsedNum <= 60 && parsedNum >= 0) {
-          applyDartHit(parsedNum);
-        }
+      if (pts > 0) {
+        const rem = state.score - pts;
+        const nextDarts = state.dartsLeft > 1 ? state.dartsLeft - 1 : 3;
+        updateScore(rem, nextDarts);
       }
     }
 
-    // Spacebar listener for Voice trigger
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-        const keypadOpen = !document.getElementById('keypadModal').classList.contains('hidden');
-        const helpOpen = !document.getElementById('helpModal').classList.contains('hidden');
-        if (!keypadOpen && !helpOpen) {
-          e.preventDefault();
-          toggleVoice();
-        }
-      }
-    });
-
-    // Initialize application on load
-    window.onload = function() {
-      initVoice();
-      renderApp();
-    };
+    // Initial Render
+    render();
   </script>
 </body>
 </html>
