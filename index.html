@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0111)file:///private/var/folders/x8/j8dmpkcx1z376sdr7fjm_x980000gn/T/B233488B-2CF3-4373-88EA-023AE1323EAB/index.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Asistente de Cierres · Bogotá Dardos Club</title>
   <link rel="icon" type="image/png" href="logo.png">
@@ -1019,13 +1019,13 @@
           <button id="btnPlus" class="step-btn" type="button" aria-label="Sumar 1">+</button>
         </div>
 
-        <div id="heroRouteRow" class="hero-route-row"><span class="dart-badge badge-hero badge-triple">T20</span><span class="route-arrow">→</span><span class="dart-badge badge-hero badge-triple">T11</span><span class="route-arrow">→</span><span class="dart-badge badge-hero badge-double">D14</span></div>
+        <div id="heroRouteRow" class="hero-route-row"></div>
         <div id="prepBannerText" class="prep-banner-text" style="display:none;"></div>
       </section>
 
-      <section id="missesSection" class="misses-section" style="display: flex;">
+      <section id="missesSection" class="misses-section">
         <div id="missesTitle" class="misses-header-title">REACCIÓN ANTE FALLO EN DARDO 1</div>
-        <div id="missesGrid" class="misses-grid"><div class="miss-card"><div class="miss-card-top"><span class="miss-label">Si cae S20</span></div><div class="miss-route"><span class="dart-badge badge-miss badge-triple">T17</span><span class="route-arrow">→</span><span class="dart-badge badge-miss badge-double">DB</span></div></div><div class="miss-card"><div class="miss-card-top"><span class="miss-label">Si cae S5</span><span class="prep-badge">Deja D20</span></div><div class="miss-route"><span class="dart-badge badge-miss badge-triple">T20</span><span class="route-arrow">→</span><span class="dart-badge badge-miss badge-single">S16</span></div></div><div class="miss-card"><div class="miss-card-top"><span class="miss-label">Si cae S1</span><span class="prep-badge">Deja D20</span></div><div class="miss-route"><span class="dart-badge badge-miss badge-triple">T20</span><span class="route-arrow">→</span><span class="dart-badge badge-miss badge-single">S20</span></div></div><div class="miss-card"><div class="miss-card-top"><span class="miss-label">Si cae T5</span><span class="prep-badge">Deja D20</span></div><div class="miss-route"><span class="dart-badge badge-miss badge-triple">T20</span><span class="route-arrow">→</span><span class="dart-badge badge-miss badge-single">S6</span></div></div><div class="miss-card"><div class="miss-card-top"><span class="miss-label">Si cae T1</span><span class="prep-badge">Deja D20</span></div><div class="miss-route"><span class="dart-badge badge-miss badge-triple">T20</span><span class="route-arrow">→</span><span class="dart-badge badge-miss badge-single">S18</span></div></div></div>
+        <div id="missesGrid" class="misses-grid"></div>
       </section>
     </main>
   </div>
@@ -1251,7 +1251,13 @@
       103: ["T20", "S11", "D16"],
       102: ["T20", "S10", "D16"],
       101: ["T20", "S9",  "D16"],
-      99:  ["T19", "S10", "D16"]
+      99:  ["T19", "S10", "D16"],
+      70:  ["T10", "D20"],
+      68:  ["T20", "D4"],
+      66:  ["T10", "D18"],
+      64:  ["T16", "D8"],
+      62:  ["T10", "D16"],
+      61:  ["T15", "D8"]
     };
 
     const PREP_OVERRIDES = {
@@ -1373,12 +1379,12 @@
         return { steps: prep2.steps, leave: prep2.leave, isCheckout: false };
       }
 
-      // 3 dardos: siempre priorizar la ruta más corta en 2..100 (excepto 99)
-      if (score <= 100 && score !== 99 && CHECKOUT_2[score]) {
-        return { steps: CHECKOUT_2[score], leave: null, isCheckout: true };
-      }
+      // 3 dardos: primero consulta rutas específicas de 3 dardos (incluye 61-70 cómodos)
       if (CHECKOUT_3[score]) {
         return { steps: CHECKOUT_3[score], leave: null, isCheckout: true };
+      }
+      if (score <= 100 && CHECKOUT_2[score]) {
+        return { steps: CHECKOUT_2[score], leave: null, isCheckout: true };
       }
       if (PREP_OVERRIDES[score]) {
         return {
@@ -1814,5 +1820,5 @@
 
     render();
   </script>
-
-</body></html>
+</body>
+</html>
